@@ -159,10 +159,20 @@ void socket_tcp(){
 
 
 void app_main(void){
-    // TODO: Crear el flujo por parte de la ESP
-    // 1. Enviar consulta para preguntar por el 
-    // 2. 
-    // 3. 
+    /* TODO: Crear el flujo por parte de la ESP
+    1. Conectarse como TCP y preguntar por el tipo de protocolo (1, 2, 3, 4) y el transport_layer (TCP, UDP)
+    * Se recibe TCP:
+        - Enviar paquete
+        - Entrar en Deep Sleep por 60 seg
+        - Repetir
+    * Se recibe UDP:
+        - Enviar datos de forma continua
+        - Consultar si cambió el transport_layer
+        - 
+    3. Paquetes recibidos por la Raspberry Pi deben ser descompuestos y almacenados en la base de datos
+    4. En cada envío de datos, deberá verificarse la configuración de la base de datos.
+    5. Se deberá ajustar el protocolo de envío o el tipo de conexión.
+    */
     nvs_init();
     wifi_init_sta(WIFI_SSID, WIFI_PASSWORD);
     ESP_LOGI(TAG,"Conectado a WiFi!\n");
