@@ -1,4 +1,6 @@
 from peewee import *
+from playhouse.postgres_ext import ArrayField
+
 
 # Configuración de la base de datos
 db_config = {
@@ -16,6 +18,30 @@ class BaseModel(Model):
         database = db
 
 class Datos(BaseModel):
+    # HEADER
+    header_id = IntegerField()
+    mac = IntegerField()
+    transport_layer = CharField(max_length=3)
+    id_protocol = IntegerField()
+    length = IntegerField()
+
+    # BODY
+    batt_level = IntegerField(null=True)
+    temp = IntegerField(null=True)
+    press = IntegerField(null=True)
+    hum = IntegerField(null=True)
+    co = FloatField(null=True)
+    rms = FloatField(null=True)
+    amp_x = FloatField(null=True)
+    frec_x = FloatField(null=True)
+    amp_y = FloatField(null=True)
+    frec_y = FloatField(null=True)
+    amp_z = FloatField(null=True)
+    frec_z = FloatField(null=True)
+
+    # Arrays
+    acc_x = ArrayField()
+    
     timestamp = TimestampField()
     id_device = CharField()
     mac = CharField()
@@ -23,6 +49,7 @@ class Datos(BaseModel):
 class Logs(BaseModel):
     id_device = CharField()
     transport_layer = CharField(max_length=3)
+    protocol_id = IntegerField()
     timestamp = TimestampField()
 
 class Configuration(BaseModel):
@@ -39,7 +66,6 @@ class Configuration(BaseModel):
         row.id_protocol = id_protocol
         row.transport_layer = transport_layer
         row.save()
-
 
 class Loss(BaseModel):
     delay = IntegerField() # ms

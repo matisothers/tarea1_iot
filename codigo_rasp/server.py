@@ -1,5 +1,14 @@
 import socket
+import random
+import struct
 from enum import Enum
+from modelos import Configuration
+from peewee import DoesNotExist
+from packet_parser import * 
+
+import uuid
+from packet_parser import pack as msg_pack
+
 HOST = '127.0.0.1'  # Escucha en todas las interfaces disponibles
 PORT = 1234       # Puerto en el que se escucha
 
@@ -15,9 +24,35 @@ class TL(Enum):
     TCP = 'TCP'
     UDP = 'UDP'
 
+
+class Config:
+    def __init__(self, transport_layer:str="TCP", id_protocol:int=0):
+        self.transport_layer = transport_layer
+        self.id_protocol = id_protocol
+        self.row = None
+        try:
+            self.row = Configuration.get_by_id(1)
+        except DoesNotExist:
+            default_row = {"id": 1, "id_protocol": self.id_protocol, "transport_layer": self.transport_layer}
+            Configuration.create(**default_row)
+            self.row = Configuration.get_by_id(1)
+
+    def get(self):
+        return {
+            "transport_layer": self.transport_layer,
+            "id_protocol": self.id_protocol
+        }
+    
+    def set(self, transport_layer:int, id_protocol:str):
+        self.transport_layer = transport_layer
+        self.id_protocol = id_protocol
+        self.row.transport_layer = transport_layer
+        self.row.id_protocol = id_protocol
+        self.row.save()
+
 # TODO: revisar si es necesario limitar la cantidad de conexiones (self.socket.listen(conns))
 class Server:
-    def __init__(self, transport_layer:TL= TL.TCP, host:str='127.0.0.1', port:int=1234, buff_size:int=1024) -> None:
+    def __init__(self, transport_layer:TL= TL.TCP, host:str='127.0.0.1', port:int=1234, buff_size:int=1024, config=Config()) -> None:
         self.transport_layer = transport_layer
         self.host = host
         self.port = port
@@ -25,6 +60,7 @@ class Server:
         self.buff_size = buff_size
         self.address = (self.host, self.port)
         self.set_socket()
+        self.config = config
 
     # Cerrar el socket actual para reemplazarlo por uno que utilice el nuevo protocolo
     def set_socket(self) -> None:
@@ -52,13 +88,30 @@ class Server:
             self.tcp_handle()
         else:
             self.udp_handle()
+
+    def parse_msg(self) -> bytes:
+        id = random.randint()
+        mac = uuid.getnode()
+        config = self.config.get()
+        transport_layer = config['transport_layer']
+        id_protocol = config['id_protocol']
+        length = 12
+
+        return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
+
+    
     
     def tcp_handle(self):
         while True:
             conn = None
             try:
+                #Escuchamos al microcontrolador y nos conectamos
                 conn, addr = self.socket.accept()
                 with conn:
+                    # Enviar la configuración al microcontrolador
+                    print(self.parse_msg())
+                    
+                    conn.sendall()
                     print(f'{addr} has connected')
                     data = conn.recv(self.buff_size)
                     # Aquí quizá una función handle_protocol(data)
@@ -72,7 +125,6 @@ class Server:
                     conn.close()
                 self.socket.close()
                 break
-        exit()
 
     def udp_handle(self): pass
 

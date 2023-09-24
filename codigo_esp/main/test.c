@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
 
 #include "esp_event.h"
@@ -115,7 +117,7 @@ void nvs_init() {
 }
 
 
-void socket_tcp(){
+void socket_tcp(char* msg){
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
@@ -136,7 +138,7 @@ void socket_tcp(){
     }
 
     // Enviar mensaje "Hola Mundo"
-    send(sock, "hola mundo", strlen("hola mundo"), 0);
+    send(sock, msg, strlen(msg), 0);
 
     // Recibir respuesta
 
@@ -152,10 +154,118 @@ void socket_tcp(){
     close(sock);
 }
 
+
+
+void socket_udp(char* msg){
+    int socket_desc;
+    struct sockaddr_in server_addr;
+    int server_struct_length = sizeof(server_addr);
+    
+    
+    // Create socket:
+    socket_desc = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    
+    if(socket_desc < 0){
+        printf("Error while creating socket\n");
+        return;
+    }
+    printf("Socket created successfully\n");
+    
+    // Set port and IP:
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(SERVER_PORT);
+    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
+    
+    // Send the message to server:
+    if(sendto(socket_desc, msg, strlen(msg), 0,
+         (struct sockaddr*)&server_addr, server_struct_length) < 0){
+        printf("Unable to send message\n");
+        return;
+    }
+    
+    // Receive the server's response:
+    char server_message[128];
+    if(recvfrom(socket_desc, server_message, sizeof(server_message), 0,
+         (struct sockaddr*)&server_addr, &server_struct_length) < 0){
+        printf("Error while receiving server's msg\n");
+        return;
+    }
+    
+    printf("Server's response: %s\n", server_message);
+    
+    // Close the socket:
+    close(socket_desc);
+}
+
+
+
+
+
 // TODO:
 // Crear la función socket_udp
+
 // Crear funcion para empaquetar datos
-// Crear funcion paara generar datos
+
+
+void acc_sensor(float* data){
+    // funcion que genera los valores acc x,y,z y Regyr x,y,z en ese orden
+
+    float a = 16.0;
+    for(int i = 0; i < 6000; i++){
+        data[i] = ((float) rand() / (float) (RAND_MAX)) * a * 2 - a;
+    }
+
+    a = 1000;
+    for(int i = 6000; i < 12000; i++){
+        data[i] = ((float) rand() / (float) (RAND_MAX)) * a * 2 - a;
+    }
+}
+
+uint8_t batt_level(){
+    return (rand() % 100) + 1;
+}
+
+
+struct kpi_data{
+    float ampx;
+    float freqx;
+    float ampy;
+    float freqy;
+    float ampz;
+    float freqz;
+    float rms;
+};
+
+kpi_data generate_kpi_data(){
+    struct kpi_data res;
+    
+    res.ampx = 0.0059 + ((float) rand() / (float) RAND_MAX) * (0.12-0.0059);
+    res.freqx = 29.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
+    res.ampy = 0.0041 + ((float) rand() / (float) RAND_MAX) * (0.11-0.0041);
+    res.freqy = 59.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
+    res.ampz = 0.008 + ((float) rand() / (float) RAND_MAX) * (0.15-0.008);
+    res.freqz = 89.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
+    res.rms = sqrt(res.ampx*res.ampx + res.ampy*res.ampy + res.ampz * res.ampz);
+
+    return res;
+}
+
+struct THPC_Data
+{
+    int temp;
+    int hum;
+    int pres;
+    float co;
+};
+
+THPC_Data generate_THPC_Data(){
+    struct THPC_Data res;
+    res.temp = 5 + (rand()/RAND_MAX)*25;
+    res.hum = 30 + (rand()/RAND_MAX)*50;
+    res.pres = 1000 + (rand()/RAND_MAX)*200;
+    res.co = 30 + ((float) rand() / (float) (RAND_MAX)) * 170;
+    return res;
+}
 
 
 void app_main(void){
@@ -173,6 +283,11 @@ void app_main(void){
     4. En cada envío de datos, deberá verificarse la configuración de la base de datos.
     5. Se deberá ajustar el protocolo de envío o el tipo de conexión.
     */
+
+    
+
+
+
     nvs_init();
     wifi_init_sta(WIFI_SSID, WIFI_PASSWORD);
     ESP_LOGI(TAG,"Conectado a WiFi!\n");
