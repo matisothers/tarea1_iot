@@ -57,10 +57,6 @@ class Configuration(BaseModel):
     transport_layer = CharField(max_length=3)
     
     @classmethod
-    def get(cls):
-        return cls.get(1)
-    
-    @classmethod
     def toggle_protocol(cls, id_protocol, transport_layer):
         row = cls.get(1)
         row.id_protocol = id_protocol

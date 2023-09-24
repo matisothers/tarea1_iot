@@ -137,8 +137,6 @@ void socket_tcp(char* msg){
         return;
     }
 
-    // Enviar mensaje "Hola Mundo"
-    send(sock, msg, strlen(msg), 0);
 
     // Recibir respuesta
 
@@ -149,6 +147,14 @@ void socket_tcp(char* msg){
         return;
     }
     ESP_LOGI(TAG, "Datos recibidos: %s", rx_buffer);
+
+    // UNPACK respuseta
+
+    
+
+
+    // Enviar mensaje "Hola Mundo"
+    send(sock, msg, strlen(msg), 0);
     
     // Cerrar el socket
     close(sock);
@@ -202,10 +208,8 @@ void socket_udp(char* msg){
 
 
 // TODO:
-// Crear la función socket_udp
 
 // Crear funcion para empaquetar datos
-
 
 void acc_sensor(float* data){
     // funcion que genera los valores acc x,y,z y Regyr x,y,z en ese orden
@@ -267,10 +271,29 @@ THPC_Data generate_THPC_Data(){
     return res;
 }
 
+// client
+
+struct Client{
+    char transport_layer[3];
+    int id_protocol;
+
+
+    // function pointer
+    float (*calculate_percentage)(int a,int b);
+} Client;
+
+char transport_layer[3];
+int id_protocol;
+
+
+
+void client(*char transport_layer, *int id_protocol){
+
+}
 
 void app_main(void){
     /* TODO: Crear el flujo por parte de la ESP
-    1. Conectarse como TCP y preguntar por el tipo de protocolo (1, 2, 3, 4) y el transport_layer (TCP, UDP)
+    1. Conectarse como TCP y preguntar por el tipo de protocolo (0, 1, 2, 3, 4) y el transport_layer (TCP, UDP)
     * Se recibe TCP:
         - Enviar paquete
         - Entrar en Deep Sleep por 60 seg
@@ -286,10 +309,19 @@ void app_main(void){
 
     
 
-
-
     nvs_init();
     wifi_init_sta(WIFI_SSID, WIFI_PASSWORD);
     ESP_LOGI(TAG,"Conectado a WiFi!\n");
+
     socket_tcp();
 }
+
+
+/*
+1. Conectar al servidor mediante socket TCP
+2. Obtener variables de configuración (id_procotol y transport_layer)
+3. Utilizar el socket correspondiente
+    - TCP: enviar datos y entrar en deepSleep por 60 segundos
+    - UDP: enviar datos hasta que transport_layer cambie
+4. Obtener variables de configuración
+*/

@@ -90,14 +90,15 @@ class Server:
             self.udp_handle()
 
     def parse_msg(self) -> bytes:
-        id = random.randint()
-        mac = uuid.getnode()
+        id = random.randint(0,99)
+        mac = str(uuid.getnode()).encode('utf-8')
         config = self.config.get()
-        transport_layer = config['transport_layer']
+        print(config)
+        transport_layer = str(config['transport_layer']).encode('utf-8')
         id_protocol = config['id_protocol']
         length = 12
 
-        return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
+        return struct.pack('<H6s3sBH', id, mac, transport_layer, id_protocol, length)
 
     
     
@@ -111,7 +112,7 @@ class Server:
                     # Enviar la configuración al microcontrolador
                     print(self.parse_msg())
                     
-                    conn.sendall()
+                    # conn.sendall()
                     print(f'{addr} has connected')
                     data = conn.recv(self.buff_size)
                     # Aquí quizá una función handle_protocol(data)

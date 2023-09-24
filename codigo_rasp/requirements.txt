@@ -1,0 +1,2 @@
+peewee
+pyscopg2
