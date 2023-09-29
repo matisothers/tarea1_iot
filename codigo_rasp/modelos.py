@@ -41,6 +41,12 @@ class Datos(BaseModel):
 
     # Arrays
     acc_x = ArrayField()
+    acc_y = ArrayField()
+    acc_z = ArrayField()
+
+    rgyr_x = ArrayField()
+    rgyr_y = ArrayField()
+    rgyr_z = ArrayField()
     
     timestamp = TimestampField()
     id_device = CharField()

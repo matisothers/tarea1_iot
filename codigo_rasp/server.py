@@ -2,7 +2,7 @@ import socket
 import random
 import struct
 from enum import Enum
-from modelos import Configuration
+from modelos import Configuration, Datos
 from peewee import DoesNotExist
 from packet_parser import * 
 
@@ -21,12 +21,18 @@ address = (HOST, PORT)
 
 # TL: Transport Layer
 class TL(Enum):
-    TCP = 'TCP'
-    UDP = 'UDP'
+    TCP = 0
+    UDP = 1
+    
+        
+        
+
+def create_instance(self,datos:dict):
+    Datos.create(**datos)
 
 
 class Config:
-    def __init__(self, transport_layer:str="TCP", id_protocol:int=0):
+    def __init__(self, transport_layer:str='TCP', id_protocol:int=0):
         self.transport_layer = transport_layer
         self.id_protocol = id_protocol
         self.row = None
@@ -43,7 +49,7 @@ class Config:
             "id_protocol": self.id_protocol
         }
     
-    def set(self, transport_layer:int, id_protocol:str):
+    def set(self, transport_layer:str, id_protocol:int):
         self.transport_layer = transport_layer
         self.id_protocol = id_protocol
         self.row.transport_layer = transport_layer
@@ -89,16 +95,63 @@ class Server:
         else:
             self.udp_handle()
 
-    def parse_msg(self) -> bytes:
-        id = random.randint(0,99)
-        mac = str(uuid.getnode()).encode('utf-8')
+    def parse_header(self) -> bytes:
+        id = random.randint(0,99) #int de 2 bytes
+        mac = str(uuid.getnode()).encode('utf-8') #string de 6 bytes
         config = self.config.get()
         print(config)
-        transport_layer = str(config['transport_layer']).encode('utf-8')
+        transport_layer = 0 if config['transport_layer']=='TCP' else 1 # int encodeado 1 byte, TCP = 0, UDP = 1
         id_protocol = config['id_protocol']
         length = 12
 
-        return struct.pack('<H6s3sBH', id, mac, transport_layer, id_protocol, length)
+        return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
+
+    def unpack_msg(self, packet:bytes):
+        id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
+        header = {
+            'id': id,
+            'mac': mac,
+            'transport_layer': transport_layer,
+            'id_protocol': id_protocol,
+            'length': length
+        }
+        body = packet[12:] # struct.unpack('<{}s'.format(length), packet[12:])[0].decode('utf-8')
+        return [header, body]
+
+    def parse_msg(self, msg:bytes) -> dict:
+        header, body = self.unpack_msg(msg)
+        id_protocol = header['id_protocol']
+        data = ['batt_level', 'timestamp', 'temp', 'press', 'hum', 'co', 'rms', 'amp_x', 'frec_x','amp_y', 'frec_y','amp_z', 'frec_z']
+        p4 = ['batt_level', 'timestamp', 'temp', 'press', 'hum', 'co', 'acc_x', 'acc_y', 'acc_z', 'rgyr_x', 'rgyr_y', 'rgyr_z'] 
+        if id_protocol == 0:
+            parsed_data = struct.unpack('<B', body)
+            # Estructura del protocolo 0
+            # HEADERS + Batt_level
+            pass
+        elif id_protocol == 1:
+            parsed_data = struct.unpack('<BL', body)
+            # Estructura del protocolo 1
+            # HEADERS + Batt_level + Timestamp 
+            pass
+        elif id_protocol == 2:
+            parsed_data = struct.unpack('<BLBiBi', body)
+            # Estructura del protocolo 1
+            # HEADERS + Batt_level + Timestamp + Temp + Press + Hum +Co
+            pass
+        elif id_protocol == 3:
+            parsed_data = struct.unpack('<BLBiBifffffff', body)
+        else:
+            parsed_data = struct.unpack('<BLBiBi2000f2000f2000f2000f2000f2000f', body)
+
+        d = {}
+        try:
+            l = len(parsed_data)
+            for k in range(l):
+                d[data[k]] = parsed_data[k]
+        except Exception:
+            return {'batt_level': parsed_data}
+
+
 
     
     
@@ -109,12 +162,25 @@ class Server:
                 #Escuchamos al microcontrolador y nos conectamos
                 conn, addr = self.socket.accept()
                 with conn:
-                    # Enviar la configuración al microcontrolador
-                    print(self.parse_msg())
-                    
-                    # conn.sendall()
                     print(f'{addr} has connected')
+                    header = self.parse_header()
+                    # Enviar la configuración al microcontrolador
+                    conn.sendto(header, addr)
+                    # Esperar respuesta del mensaje
                     data = conn.recv(self.buff_size)
+                    # Guardar mensaje en la base datos con la data recibida
+                    table_data = self.parse_msg(data)
+                    Datos.create(**table_data) # insertar datos en la base de datos
+                    # Consultar a la base de datos la configuración actual
+                    config = self.config.get()
+                    header = self.parse_header()
+                    # Enviar la configuración
+                    conn.sendto(header, addr)
+                    # Enviar la información al cliente
+                    if config['transport_layer'] != 'TCP':
+                        break
+
+
                     # Aquí quizá una función handle_protocol(data)
                     if data:
                         # TODO: Revisar el protocolo y transport_layer de la base de datos
@@ -126,6 +192,9 @@ class Server:
                     conn.close()
                 self.socket.close()
                 break
+        header = 
+        self.set_protocol()
+        self.run()
 
     def udp_handle(self): pass
 

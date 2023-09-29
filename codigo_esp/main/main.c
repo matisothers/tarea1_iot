@@ -14,6 +14,7 @@
 #include "lwip/sys.h"
 #include "nvs_flash.h"
 #include "lwip/sockets.h" // Para sockets
+#include "client.h"
 
 //Credenciales de WiFi
 
@@ -204,72 +205,10 @@ void socket_udp(char* msg){
 }
 
 
-
-
-
 // TODO:
 
 // Crear funcion para empaquetar datos
 
-void acc_sensor(float* data){
-    // funcion que genera los valores acc x,y,z y Regyr x,y,z en ese orden
-
-    float a = 16.0;
-    for(int i = 0; i < 6000; i++){
-        data[i] = ((float) rand() / (float) (RAND_MAX)) * a * 2 - a;
-    }
-
-    a = 1000;
-    for(int i = 6000; i < 12000; i++){
-        data[i] = ((float) rand() / (float) (RAND_MAX)) * a * 2 - a;
-    }
-}
-
-uint8_t batt_level(){
-    return (rand() % 100) + 1;
-}
-
-
-struct kpi_data{
-    float ampx;
-    float freqx;
-    float ampy;
-    float freqy;
-    float ampz;
-    float freqz;
-    float rms;
-};
-
-kpi_data generate_kpi_data(){
-    struct kpi_data res;
-    
-    res.ampx = 0.0059 + ((float) rand() / (float) RAND_MAX) * (0.12-0.0059);
-    res.freqx = 29.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
-    res.ampy = 0.0041 + ((float) rand() / (float) RAND_MAX) * (0.11-0.0041);
-    res.freqy = 59.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
-    res.ampz = 0.008 + ((float) rand() / (float) RAND_MAX) * (0.15-0.008);
-    res.freqz = 89.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
-    res.rms = sqrt(res.ampx*res.ampx + res.ampy*res.ampy + res.ampz * res.ampz);
-
-    return res;
-}
-
-struct THPC_Data
-{
-    int temp;
-    int hum;
-    int pres;
-    float co;
-};
-
-THPC_Data generate_THPC_Data(){
-    struct THPC_Data res;
-    res.temp = 5 + (rand()/RAND_MAX)*25;
-    res.hum = 30 + (rand()/RAND_MAX)*50;
-    res.pres = 1000 + (rand()/RAND_MAX)*200;
-    res.co = 30 + ((float) rand() / (float) (RAND_MAX)) * 170;
-    return res;
-}
 
 // client
 
@@ -287,10 +226,6 @@ int id_protocol;
 
 
 
-void client(*char transport_layer, *int id_protocol){
-
-}
-
 void app_main(void){
     /* TODO: Crear el flujo por parte de la ESP
     1. Conectarse como TCP y preguntar por el tipo de protocolo (0, 1, 2, 3, 4) y el transport_layer (TCP, UDP)
@@ -307,13 +242,14 @@ void app_main(void){
     5. Se deberá ajustar el protocolo de envío o el tipo de conexión.
     */
 
-    
+    client self;
+    Client__init(self);
 
     nvs_init();
     wifi_init_sta(WIFI_SSID, WIFI_PASSWORD);
     ESP_LOGI(TAG,"Conectado a WiFi!\n");
 
-    socket_tcp();
+    Client__handle(self);
 }
 
 
