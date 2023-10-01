@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+typedef unsigned char byte;
 struct THPC_Data
 {
     int temp;
@@ -16,10 +17,14 @@ struct kpi_data{
     float freqz;
     float rms;
 } kpi;
-struct info;
+struct Info{
+    int transport_layer;
+    int id_protocol;
+};
 struct Client{
     int transport_layer;
     int id_protocol;
+    int packet_id=0;
     char * MAC;
 
 
@@ -43,3 +48,6 @@ void acc_sensor(float* data);
 uint8_t batt_level()
 struct kpi_data generate_kpi_data()
 THPC_Data generate_THPC_Data();
+byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg);
+void set_header_to_msg(byte* buffer, int body_lenght);
+struct Info unpack(byte * packet) 

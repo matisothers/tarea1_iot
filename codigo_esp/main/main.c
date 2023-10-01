@@ -117,7 +117,7 @@ void nvs_init() {
     ESP_ERROR_CHECK(ret);
 }
 
-
+/*
 void socket_tcp(char* msg){
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
@@ -223,7 +223,7 @@ struct Client{
 
 char transport_layer[3];
 int id_protocol;
-
+*/
 
 
 void app_main(void){

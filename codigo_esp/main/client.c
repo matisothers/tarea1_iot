@@ -6,8 +6,6 @@
 #include "freertos/FreeRTOS.h"
 
 
-typedef unsigned char byte;
-
 void Client__init(struct Client* self){
     esp_deep_sleep_enable_timer_wakeup(60000000); // setea el sleep en 60 segundos
     self->transport_layer = 0;
@@ -114,6 +112,17 @@ void Client__udp(struct Client* self){
 
     return;
 }
+
+void set_header_to_msg(byte* buffer, int body_lenght){
+    int size = 12 + body_lenght;
+    memcpy(buffer, &(self->packet_id), 2);
+    memcpy(buffer+2, self->MAC + 2, 6);
+    memcpy(buffer + 8, &(self->transport_layer), 1);
+    memcpy(buffer + 9, &(self->id_protocol), 1);
+    memcpy(buffer + 10, &(size), 2);
+    self->packet_id++;
+}
+
 
 // función que retorna el mensaje (headers+body) empaquetado
 byte* Client__handle_msg(struct Client* self){
@@ -237,7 +246,7 @@ void Client__send(client *self, unsigned char *buffer, size_t size){
 // PACK UNPACK
 
 
-byte * pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg) {
+byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg) {
     int length_msg = strlen(msg);
     int length_packet = 12 + length_msg;
     byte * packet = malloc(length_packet);
@@ -253,12 +262,6 @@ byte * pack(int packet_id, char* mac, int transport_layer, int id_protocol, char
     return packet;
 }
 
-
-
-struct Info{
-    int transport_layer;
-    int id_protocol;
-};
 
 
 struct Info unpack(byte * packet) {
