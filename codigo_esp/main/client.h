@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-typedef unsigned char byte;
+typedef char byte;
 struct THPC_Data
 {
     int temp;

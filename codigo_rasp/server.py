@@ -2,12 +2,15 @@ import socket
 import random
 import struct
 from enum import Enum
-from modelos import Configuration, Datos
+from modelos import Configuration, Datos, Logs, Loss
 from peewee import DoesNotExist
 from packet_parser import * 
 
+from datetime import datetime
 import uuid
 from packet_parser import pack as msg_pack
+
+# from pyinput import keyboard
 
 HOST = '127.0.0.1'  # Escucha en todas las interfaces disponibles
 PORT = 1234       # Puerto en el que se escucha
@@ -99,7 +102,6 @@ class Server:
         id = random.randint(0,99) #int de 2 bytes
         mac = str(uuid.getnode()).encode('utf-8') #string de 6 bytes
         config = self.config.get()
-        print(config)
         transport_layer = 0 if config['transport_layer']=='TCP' else 1 # int encodeado 1 byte, TCP = 0, UDP = 1
         id_protocol = config['id_protocol']
         length = 12
@@ -118,11 +120,13 @@ class Server:
         body = packet[12:] # struct.unpack('<{}s'.format(length), packet[12:])[0].decode('utf-8')
         return [header, body]
 
-    def parse_msg(self, msg:bytes) -> dict:
+    def parse_body(self, msg:bytes) -> dict:
+        
         header, body = self.unpack_msg(msg)
-        id_protocol = header['id_protocol']
+        id_protocol = header["id_protocol"]
         data = ['batt_level', 'timestamp', 'temp', 'press', 'hum', 'co', 'rms', 'amp_x', 'frec_x','amp_y', 'frec_y','amp_z', 'frec_z']
         p4 = ['batt_level', 'timestamp', 'temp', 'press', 'hum', 'co', 'acc_x', 'acc_y', 'acc_z', 'rgyr_x', 'rgyr_y', 'rgyr_z'] 
+        d = {}
         if id_protocol == 0:
             parsed_data = struct.unpack('<B', body)
             # Estructura del protocolo 0
@@ -142,18 +146,46 @@ class Server:
             parsed_data = struct.unpack('<BLBiBifffffff', body)
         else:
             parsed_data = struct.unpack('<BLBiBi2000f2000f2000f2000f2000f2000f', body)
-
-        d = {}
-        try:
             l = len(parsed_data)
             for k in range(l):
-                d[data[k]] = parsed_data[k]
-        except Exception:
-            return {'batt_level': parsed_data}
+                d[p4[k]] = parsed_data[k]
+            return d
+
+        l = len(parsed_data)
+        for k in range(l):
+            d[data[k]] = parsed_data[k]
+        return d
 
 
+    def save_to_database(self, msg: bytes):
+        header, body = self.unpack_msg(msg)
+        table_data = self.parse_body(body,header["id_protocol"])
+        # subir datos a la tabla Datos
+        Datos.create(**table_data)
 
-    
+        # subir datos a la tabla Logs
+        id_device = header['mac']
+        transport_layer = header['transport_layer']
+        id_protocol = header['id_protocol']
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+
+        # subir datos a la tabla Loss
+
+    def create_log(self, device):
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+        config = self.config.get()
+        Logs.create(**{
+            'id_device': device,
+            'transport_layer':config['transport_layer'],
+            'id_protocol': config['id_protocol'],
+            'timestamp': timestamp
+        })
+
+    #def save_to_loss(self,timestamp:int,packet_loss:bytes):
+
+
     
     def tcp_handle(self):
         while True:
@@ -162,6 +194,9 @@ class Server:
                 #Escuchamos al microcontrolador y nos conectamos
                 conn, addr = self.socket.accept()
                 with conn:
+                    # Registramos la conexión en la tabla Logs
+                    self.create_log(device=addr[0])
+
                     print(f'{addr} has connected')
                     header = self.parse_header()
                     # Enviar la configuración al microcontrolador
@@ -171,12 +206,14 @@ class Server:
                     # Guardar mensaje en la base datos con la data recibida
                     table_data = self.parse_msg(data)
                     Datos.create(**table_data) # insertar datos en la base de datos
+
                     # Consultar a la base de datos la configuración actual
                     config = self.config.get()
                     header = self.parse_header()
                     # Enviar la configuración
                     conn.sendto(header, addr)
                     # Enviar la información al cliente
+
                     if config['transport_layer'] != 'TCP':
                         break
 
@@ -192,11 +229,37 @@ class Server:
                     conn.close()
                 self.socket.close()
                 break
-        header = 
-        self.set_protocol()
+        header = self.parse_header()
+        tl = TL.TCP if header['transport_layer'] == 0 else TL.UDP
+        self.set_protocol(tl)
         self.run()
 
-    def udp_handle(self): pass
+    def udp_handle(self):
+        connected_clients = set()
+        while True:
+            # Recibimos mensaje
+            data, addr = self.socket.recvfrom(self.buff_size)
+            if addr not in connected_clients:
+                connected_clients.add(addr)
+                self.create_log(device=addr)
+                # Enviamos header con la configuración
+                header = self.parse_header()
+                self.socket.sendto(header, addr)
+            else:
+                # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
+                table_data = self.parse_msg(data)
+                Datos.create(**table_data) # insertar datos en la base de datos
+                config = self.config.get()
+                header = self.parse_header()
+                # Enviar la configuración
+                self.socket.sendto(header, addr)
+                if config['transport_layer'] != 'UDP':
+                    break
+
+        header = self.parse_header()
+        tl = TL.UDP if header['transport_layer'] == 1 else TL.TCP
+        self.set_protocol(tl)
+        self.run()
 
 s = Server()
 s.run()

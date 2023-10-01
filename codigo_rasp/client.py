@@ -34,7 +34,13 @@ class Client:
         response = self.socket.recv(self.buff_size)
         print(response.decode('utf-8'))
 
-    def send_udp(self, msg): pass
+    def send_udp(self, msg):
+        # enviar mensaje vacío para comenzar la conexión
+        
+        # recibir header con la configuración
+
+        # while true para enviar datos hasta que cambie el transport layer
+        pass
 
     def run(self):
         if self.transport_layer == TL.TCP:
