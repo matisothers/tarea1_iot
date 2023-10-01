@@ -1,7 +1,22 @@
 #include <stdio.h>
 
-struct THPC_Data;
-struct kpi_data;
+struct THPC_Data
+{
+    int temp;
+    int hum;
+    int pres;
+    float co;
+} thpc;
+struct kpi_data{
+    float ampx;
+    float freqx;
+    float ampy;
+    float freqy;
+    float ampz;
+    float freqz;
+    float rms;
+} kpi;
+struct info;
 struct Client{
     int transport_layer;
     int id_protocol;
