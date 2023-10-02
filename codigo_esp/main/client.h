@@ -60,6 +60,7 @@ extern struct Client{
     int id_protocol;
     int packet_id;
     char * MAC;
+    int socket;
 
 
     // void (*Client__init)(struct Client* self);
