@@ -1,5 +1,7 @@
 import socket
 from enum import Enum
+import struct
+import time
 
 
 class TL(Enum):
@@ -48,5 +50,41 @@ class Client:
         else:
             self.send_udp("Hola mundo")
 
-c = Client()
-c.run()
+#c = Client()
+#c.run()
+
+"""sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+connected = False
+while True:
+    if not connected:
+        sock.sendto(b'', ('127.0.0.1', 1234))
+        connected=True
+    header = sock.recv(1024)
+    msg = struct.unpack('<H6sBBH', header)
+    print(msg)
+    sock.sendto(b'test', ('127.0.0.1', 1234))
+    time.sleep(1)"""
+
+# Define the host and port to listen on
+host = '127.0.0.1'  # Use '0.0.0.0' to listen on all available network interfaces
+port = 1234
+
+# Create a socket object
+socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+socket.connect((host, port))
+header = socket.recv(1024)
+msg = struct.unpack('<H6sBBH', header)
+print(msg)
+
+while True:
+    # enviar protocolo
+    socket.sendall(b"Hello, world")
+    time.sleep(1)
+    header = socket.recv(1024)
+    msg = struct.unpack('<H6sBBH', header)
+    print(msg)
+    # if transport-layer != TCP
+        # me cambio de socket
+
+    

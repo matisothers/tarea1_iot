@@ -9,10 +9,14 @@ from packet_parser import *
 from datetime import datetime
 import uuid
 from packet_parser import pack as msg_pack
+from modelos import create_tables
+
+
+create_tables()
 
 # from pyinput import keyboard
 
-HOST = '127.0.0.1'  # Escucha en todas las interfaces disponibles
+HOST = '0.0.0.0'  # Escucha en todas las interfaces disponibles
 PORT = 1234       # Puerto en el que se escucha
 
 address = (HOST, PORT)
@@ -35,7 +39,7 @@ def create_instance(self,datos:dict):
 
 
 class Config:
-    def __init__(self, transport_layer:str='TCP', id_protocol:int=0):
+    def __init__(self, transport_layer:int=1, id_protocol:int=0):
         self.transport_layer = transport_layer
         self.id_protocol = id_protocol
         self.row = None
@@ -47,12 +51,13 @@ class Config:
             self.row = Configuration.get_by_id(1)
 
     def get(self):
+        data = Configuration.get_by_id(1)
         return {
-            "transport_layer": self.transport_layer,
-            "id_protocol": self.id_protocol
+            "transport_layer": data.transport_layer,
+            "id_protocol": data.id_protocol
         }
     
-    def set(self, transport_layer:str, id_protocol:int):
+    def set(self, transport_layer:int, id_protocol:int):
         self.transport_layer = transport_layer
         self.id_protocol = id_protocol
         self.row.transport_layer = transport_layer
@@ -61,7 +66,7 @@ class Config:
 
 # TODO: revisar si es necesario limitar la cantidad de conexiones (self.socket.listen(conns))
 class Server:
-    def __init__(self, transport_layer:TL= TL.TCP, host:str='127.0.0.1', port:int=1234, buff_size:int=1024, config=Config()) -> None:
+    def __init__(self, transport_layer:int = 0, host:str='127.0.0.1', port:int=1234, buff_size:int=1024, config=Config()) -> None:
         self.transport_layer = transport_layer
         self.host = host
         self.port = port
@@ -77,23 +82,23 @@ class Server:
         if self.socket:
             self.socket.close()
             self.socket = None
-        if self.transport_layer == TL.TCP:
+        if self.transport_layer == 0:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.bind(self.address)
             self.socket.listen()
         else:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.socket.bind(self.address)
-        print(f"{self.transport_layer.name} socket waiting for connections at port {self.port}")
+        print(f"{self.transport_layer} socket waiting for connections at port {self.port}")
     
     # Si el protocolo cambia, también lo hace el socket
-    def set_protocol(self, transport_layer:TL) -> None:
+    def set_protocol(self, transport_layer:int) -> None:
         if self.transport_layer != transport_layer:
             self.transport_layer = transport_layer
             self.set_socket()
 
     def run(self):
-        if self.transport_layer == TL.TCP:
+        if self.transport_layer == 0:
             self.tcp_handle()
         else:
             self.udp_handle()
@@ -102,7 +107,7 @@ class Server:
         id = random.randint(0,99) #int de 2 bytes
         mac = str(uuid.getnode()).encode('utf-8') #string de 6 bytes
         config = self.config.get()
-        transport_layer = 0 if config['transport_layer']=='TCP' else 1 # int encodeado 1 byte, TCP = 0, UDP = 1
+        transport_layer = config['transport_layer']  # int encodeado 1 byte, TCP = 0, UDP = 1
         id_protocol = config['id_protocol']
         length = 12
 
@@ -173,91 +178,85 @@ class Server:
         # subir datos a la tabla Loss
 
     def create_log(self, device):
-        now = datetime.now()
-        timestamp = datetime.timestamp(now)
+        timestamp = datetime.now()
         config = self.config.get()
-        Logs.create(**{
+        print(config)
+        log = {
             'id_device': device,
             'transport_layer':config['transport_layer'],
             'id_protocol': config['id_protocol'],
             'timestamp': timestamp
-        })
+        }
+        print(log)
+        Logs.create(**log)
+        print("[SERVER] CREADO LOG", log)
 
     #def save_to_loss(self,timestamp:int,packet_loss:bytes):
 
 
     
     def tcp_handle(self):
-        while True:
-            conn = None
-            try:
-                #Escuchamos al microcontrolador y nos conectamos
-                conn, addr = self.socket.accept()
-                with conn:
-                    # Registramos la conexión en la tabla Logs
-                    self.create_log(device=addr[0])
+        conn, addr = self.socket.accept()
+        mac = addr[0]
+        with conn:
+            print(f'{addr} has connected')
+            self.create_log(device=mac)
+            header = self.parse_header()
+            # Enviar la configuración al microcontrolador
+            conn.sendto(header, addr)
+            while True:
+                # Esperar respuesta del mensaje
+                data = conn.recv(self.buff_size)
+                print(data)
+                # Guardar mensaje en la base datos con la data recibida
+                # table_data = self.parse_body(data)
+                # Datos.create(**table_data) # insertar datos en la base de datos
 
-                    print(f'{addr} has connected')
-                    header = self.parse_header()
-                    # Enviar la configuración al microcontrolador
-                    conn.sendto(header, addr)
-                    # Esperar respuesta del mensaje
-                    data = conn.recv(self.buff_size)
-                    # Guardar mensaje en la base datos con la data recibida
-                    table_data = self.parse_msg(data)
-                    Datos.create(**table_data) # insertar datos en la base de datos
+                # Consultar a la base de datos la configuración actual
+                config = self.config.get()
+                header = self.parse_header()
+                conn.sendto(header, addr)
+                #header = self.parse_header()
+                # Enviar la configuración
+                #conn.sendto(header, addr)
+                # Enviar la información al cliente
 
-                    # Consultar a la base de datos la configuración actual
-                    config = self.config.get()
-                    header = self.parse_header()
-                    # Enviar la configuración
-                    conn.sendto(header, addr)
-                    # Enviar la información al cliente
-
-                    if config['transport_layer'] != 'TCP':
-                        break
-
-
-                    # Aquí quizá una función handle_protocol(data)
-                    if data:
-                        # TODO: Revisar el protocolo y transport_layer de la base de datos
-                        print(f"[CLIENT] {data.decode('utf-8')}")
-                        response = f"[SERVER] Your message is: {data.decode('utf-8')}"
-                        conn.sendall(response.encode('utf-8'))  # Envía la respuesta al cliente
-            except KeyboardInterrupt:
-                if conn:
-                    conn.close()
-                self.socket.close()
-                break
-        header = self.parse_header()
-        tl = TL.TCP if header['transport_layer'] == 0 else TL.UDP
+                if config['transport_layer'] != 0:
+                    break
+        config = self.config.get()
+        tl = config['transport_layer']
         self.set_protocol(tl)
         self.run()
 
+
     def udp_handle(self):
-        connected_clients = set()
+        connected_clients = []
         while True:
             # Recibimos mensaje
             data, addr = self.socket.recvfrom(self.buff_size)
-            if addr not in connected_clients:
-                connected_clients.add(addr)
-                self.create_log(device=addr)
+            print(data)
+            mac = addr[0]
+            if mac not in connected_clients:
+                print(f'[SERVER] SE CONECTO {addr}')
+                connected_clients.append(mac)
+                self.create_log(device=mac)
                 # Enviamos header con la configuración
                 header = self.parse_header()
                 self.socket.sendto(header, addr)
             else:
                 # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
-                table_data = self.parse_msg(data)
-                Datos.create(**table_data) # insertar datos en la base de datos
+                # table_data = self.parse_body(data)
+                #Datos.create(**table_data) # insertar datos en la base de datos
+                # print(table_data)
                 config = self.config.get()
                 header = self.parse_header()
                 # Enviar la configuración
                 self.socket.sendto(header, addr)
-                if config['transport_layer'] != 'UDP':
+                if config['transport_layer'] != 1:
                     break
 
-        header = self.parse_header()
-        tl = TL.UDP if header['transport_layer'] == 1 else TL.TCP
+        config = self.config.get()
+        tl = config['transport_layer']
         self.set_protocol(tl)
         self.run()
 

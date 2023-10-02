@@ -1,10 +1,10 @@
 from peewee import *
 from playhouse.postgres_ext import ArrayField
-
+import datetime
 
 # Configuración de la base de datos
 db_config = {
-    'host': 'localhost', 
+    'host': '0.0.0.0', 
     'port': 5432, 
     'user': 'postgres', 
     'password': 'postgres', 
@@ -20,7 +20,7 @@ class BaseModel(Model):
 class Datos(BaseModel):
     # HEADER
     header_id = IntegerField()
-    mac = IntegerField()
+    header_mac = IntegerField()
     transport_layer = CharField(max_length=3)
     id_protocol = IntegerField()
     length = IntegerField()
@@ -40,27 +40,26 @@ class Datos(BaseModel):
     frec_z = FloatField(null=True)
 
     # Arrays
-    acc_x = ArrayField()
-    acc_y = ArrayField()
-    acc_z = ArrayField()
+    acc_x = ArrayField(FloatField)
+    acc_y = ArrayField(FloatField)
+    acc_z = ArrayField(FloatField)
 
-    rgyr_x = ArrayField()
-    rgyr_y = ArrayField()
-    rgyr_z = ArrayField()
+    rgyr_x = ArrayField(FloatField)
+    rgyr_y = ArrayField(FloatField)
+    rgyr_z = ArrayField(FloatField)
     
     timestamp = TimestampField()
     id_device = CharField()
-    mac = CharField()
 
 class Logs(BaseModel):
     id_device = CharField()
-    transport_layer = CharField(max_length=3)
-    protocol_id = IntegerField()
-    timestamp = TimestampField()
+    transport_layer = IntegerField(null=True)
+    id_protocol = IntegerField(null=True)
+    timestamp = DateTimeField()
 
 class Configuration(BaseModel):
     id_protocol = IntegerField()
-    transport_layer = CharField(max_length=3)
+    transport_layer = IntegerField()
     
     @classmethod
     def toggle_protocol(cls, id_protocol, transport_layer):
@@ -73,6 +72,11 @@ class Loss(BaseModel):
     delay = IntegerField() # ms
     packet_loss = IntegerField()
 
+
+def create_tables():
+    with db:
+        db.create_tables([Datos, Logs, Configuration, Loss])
+        print("tablas creadas")
 
 
 # Ahora puedes definir tus modelos específicos heredando de BaseModel
