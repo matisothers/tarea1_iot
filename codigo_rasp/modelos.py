@@ -1,6 +1,6 @@
 from peewee import *
 from playhouse.postgres_ext import ArrayField
-
+import datetime
 
 # Configuración de la base de datos
 db_config = {
@@ -54,13 +54,13 @@ class Datos(BaseModel):
 
 class Logs(BaseModel):
     id_device = CharField()
-    transport_layer = CharField(max_length=3)
-    protocol_id = IntegerField()
-    timestamp = TimestampField()
+    transport_layer = IntegerField(null=True)
+    id_protocol = IntegerField(null=True)
+    timestamp = DateTimeField()
 
 class Configuration(BaseModel):
     id_protocol = IntegerField()
-    transport_layer = CharField(max_length=3)
+    transport_layer = IntegerField()
     
     @classmethod
     def toggle_protocol(cls, id_protocol, transport_layer):
