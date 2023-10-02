@@ -9,7 +9,10 @@ from packet_parser import *
 from datetime import datetime
 import uuid
 from packet_parser import pack as msg_pack
+from modelos import create_tables
 
+
+create_tables()
 
 # from pyinput import keyboard
 

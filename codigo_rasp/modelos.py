@@ -20,7 +20,7 @@ class BaseModel(Model):
 class Datos(BaseModel):
     # HEADER
     header_id = IntegerField()
-    mac = IntegerField()
+    header_mac = IntegerField()
     transport_layer = CharField(max_length=3)
     id_protocol = IntegerField()
     length = IntegerField()
@@ -40,17 +40,16 @@ class Datos(BaseModel):
     frec_z = FloatField(null=True)
 
     # Arrays
-    acc_x = ArrayField()
-    acc_y = ArrayField()
-    acc_z = ArrayField()
+    acc_x = ArrayField(FloatField)
+    acc_y = ArrayField(FloatField)
+    acc_z = ArrayField(FloatField)
 
-    rgyr_x = ArrayField()
-    rgyr_y = ArrayField()
-    rgyr_z = ArrayField()
+    rgyr_x = ArrayField(FloatField)
+    rgyr_y = ArrayField(FloatField)
+    rgyr_z = ArrayField(FloatField)
     
     timestamp = TimestampField()
     id_device = CharField()
-    mac = CharField()
 
 class Logs(BaseModel):
     id_device = CharField()
@@ -72,6 +71,11 @@ class Configuration(BaseModel):
 class Loss(BaseModel):
     delay = IntegerField() # ms
     packet_loss = IntegerField()
+
+
+def create_tables():
+    with db:
+        db.create_tables([Datos, Logs, Configuration, Loss])
 
 
 
