@@ -1,34 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
 
-
-#include "esp_event.h"
-#include "esp_log.h"
-#include "esp_system.h"
-#include "esp_wifi.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
-#include "lwip/err.h"
-#include "lwip/sys.h"
-#include "nvs_flash.h"
-#include "lwip/sockets.h" // Para sockets
 #include "client.h"
-
-//Credenciales de WiFi
-
-#define WIFI_SSID "testIot"
-#define WIFI_PASSWORD "IotTeam2023"
-#define SERVER_IP     "192.168.4.1" // IP del servidor
-#define SERVER_PORT   1234
-
-// Variables de WiFi
-#define WIFI_CONNECTED_BIT BIT0
-#define WIFI_FAIL_BIT BIT1
-static const char* TAG = "WIFI";
-static int s_retry_num = 0;
-static EventGroupHandle_t s_wifi_event_group;
 
 
 void event_handler(void* arg, esp_event_base_t event_base,
@@ -242,14 +213,14 @@ void app_main(void){
     5. Se deberá ajustar el protocolo de envío o el tipo de conexión.
     */
 
-    client self;
-    Client__init(self);
+    struct Client self;
+    Client__init(&self);
 
     nvs_init();
     wifi_init_sta(WIFI_SSID, WIFI_PASSWORD);
     ESP_LOGI(TAG,"Conectado a WiFi!\n");
 
-    Client__handle(self);
+    Client__handle(&self);
 }
 
 

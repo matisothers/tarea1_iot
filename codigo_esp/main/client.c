@@ -1,15 +1,25 @@
 #include <stdio.h>
 
-#include "lwip/sockets.h" // Para sockets
 
 #include "client.h"
-#include "freertos/FreeRTOS.h"
+#include "esp_sleep.h"
+// #include "esp_event.h"
+// #include "esp_log.h"
+// #include "esp_system.h"
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/event_groups.h"
+// #include "lwip/err.h"
+// #include "lwip/sys.h"
+// #include "nvs_flash.h"
+// #include "lwip/sockets.h" // Para sockets
 
 
 void Client__init(struct Client* self){
-    esp_deep_sleep_enable_timer_wakeup(60000000); // setea el sleep en 60 segundos
+    esp_sleep_enable_timer_wakeup(60000000); // setea el sleep en 60 segundos
     self->transport_layer = 0;
-    
+    self->id_protocol = 0;
+    self->packet_id = 0;
+    self->MAC = "123456";
 }
 
 int Client__get_transport_layer(struct Client* self){
@@ -51,7 +61,7 @@ void Client__tcp(struct Client* self){
     }
 
     // enviar mensaje
-    char* msg = Client__handle_msg(self);
+    byte* msg = Client__handle_msg(self);
     send(sock, msg, strlen(msg), 0);
     
     // entrar en modo Deep Sleep por 60 segundo
@@ -81,12 +91,12 @@ void Client__tcp(struct Client* self){
 void Client__udp(struct Client* self){
     // Crear socket
     struct sockaddr_in server_addr;
-    int server_struct_length = sizeof(server_addr);
+    socklen_t server_struct_length = sizeof(server_addr);
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
     inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
 
-    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
     if(sock < 0){
         printf("Error while creating socket\n");
@@ -94,7 +104,7 @@ void Client__udp(struct Client* self){
     }
     printf("Socket created successfully\n");
 
-    char* msg = Client__handle_msg(self);
+    byte* msg = Client__handle_msg(self);
     sendto(sock, msg, strlen(msg), 0, (struct sockaddr*)&server_addr, server_struct_length);
 
     // Receive the server's response:
@@ -113,7 +123,7 @@ void Client__udp(struct Client* self){
     return;
 }
 
-void set_header_to_msg(byte* buffer, int body_lenght){
+void set_header_to_msg(struct Client* self, byte* buffer, int body_lenght){
     int size = 12 + body_lenght;
     memcpy(buffer, &(self->packet_id), 2);
     memcpy(buffer+2, self->MAC + 2, 6);
@@ -130,7 +140,7 @@ byte* Client__handle_msg(struct Client* self){
     byte* message;
     // crear body según el id_protocol
     int id_protocol = Client__get_id_protocol(self);
-    int body_size;
+    int body_size = 0;
     switch (id_protocol){
         case 0:
             body_size = 1;
@@ -145,7 +155,7 @@ byte* Client__handle_msg(struct Client* self){
             body_size = 15 + 7*4;
             break;
         case 4:
-            body_size = 15 + 8000*6;
+            body_size = 15 + 12000 * sizeof(float);
             break;
 
     }
@@ -153,7 +163,7 @@ byte* Client__handle_msg(struct Client* self){
     // Crear headers
     
     message = (byte*) malloc(12 + body_size * sizeof(byte));
-    set_header_to_msg(message, body_size);
+    set_header_to_msg(self, message, body_size);
     // ...
 
     char batt = batt_level();
@@ -163,16 +173,17 @@ byte* Client__handle_msg(struct Client* self){
         memcpy(message + 13, &timestamp, 4);
     }
     if (id_protocol > 1){
-        thpc tdata = generate_THPC_Data();
+        struct THPC_Data tdata = generate_THPC_Data();
         memcpy(message + 18, &tdata, 10);
     }
     if (id_protocol == 3){
-        kpi kdata = generate_kpi_data();
-        memcpy(message + 27, &kpi, 7*4);
+        struct kpi_data kdata = generate_kpi_data();
+        memcpy(message + 27, &kdata, 7*4);
     }
     if (id_protocol == 4){
-        float *fdata = malloc(6000 * sizeof(float));
-        memcpy(message + 27, (byte *)fdata, 8000*6);
+        float *fdata = malloc(12000 * sizeof(float));
+        acc_sensor(fdata);
+        memcpy(message + 27, (byte *)fdata, 12000 * sizeof(float));
     }
     // retornar headers + body
     
@@ -203,7 +214,7 @@ void Client__handle(struct Client* self){
 
     // Recibir respuesta
 
-    char rx_buffer[128];
+    byte rx_buffer[128];
     int rx_len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
     if (rx_len < 0) {
         ESP_LOGE(TAG, "Error al recibir datos");
@@ -233,14 +244,6 @@ void Client__handle(struct Client* self){
     }
 }
 
-void Client__send(client *self, unsigned char *buffer, size_t size){
-    if (transport_layer){ //TCP
-        send(self.socket, buffer, size, 0);
-    } 
-    else{ //UDP
-        sento(self.socket, buffer, size, 0, self.to_socketaddr, self.socketaddr_size); //to_socketaddr is (struct sockaddr*) 
-    }
-}
 
 
 // PACK UNPACK
@@ -253,12 +256,12 @@ byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char 
     
    
     memcpy(packet, &packet_id, 2);
-    memcpy(packet + 2, MAC, 6);
+    memcpy(packet + 2, mac, 6);
     memcpy(packet + 8, &transport_layer, 1);
     memcpy(packet + 9, &id_protocol, 1);
 
     memcpy(packet + 10, &length_packet, 2);
-    memcpy(packet + 12, text, length_msg);
+    memcpy(packet + 12, msg, length_msg);
     return packet;
 }
 
@@ -266,22 +269,19 @@ byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char 
 
 struct Info unpack(byte * packet) {
     int packet_id;
-    char* MAC;
     int transport_layer;
     int protocol;
 
     int length_msg;
-    byte * text;
 
     memcpy(&packet_id, packet, 2);
-    memcpy(MAC, packet + 2, 6);
     memcpy(&transport_layer, packet + 8, 1);
     memcpy(&protocol,packet + 9, 1);
     memcpy(&length_msg, packet + 10, 2);
 
     struct Info res;
     res.transport_layer = transport_layer;
-    res.id_protocol = id_protocol;
+    res.id_protocol = protocol;
     return res;
 
 
@@ -306,7 +306,7 @@ struct Info unpack(byte * packet) {
 
 // FUNCIONES PARA GENERAR DATOS
 
-void acc_sensor(float* data){
+void acc_sensor(float* data){ // 12.000 
     // funcion que genera los valores acc x,y,z y Regyr x,y,z en ese orden
 
     float a = 16.0;
