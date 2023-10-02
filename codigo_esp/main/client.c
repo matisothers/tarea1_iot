@@ -23,8 +23,8 @@ void Client__init(struct Client* self){
     self->packet_id = 0;
     self->MAC = "123456";
     // por defecto TCP
-    cliente->socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (cliente->socket == -1) {
+    self->socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (self->socket == -1) {
         perror("Error al crear el socket");
         exit(EXIT_FAILURE);
     }
@@ -44,8 +44,8 @@ void Client__set_config(struct Client* self, int transport_layer, int id_protoco
 }
 
 void Client__recv(struct Client* self, char *buffer, int buff_size){
-    memset(buffer, 0, buffer_size);
-    if (recv(self->socket, buffer, buffer_size, 0) == -1) {
+    memset(buffer, 0, buff_size);
+    if (recv(self->socket, buffer, buff_size, 0) == -1) {
         ESP_LOGE(TAG, "Error al recibir datos");
         exit(EXIT_FAILURE);
     }
@@ -58,7 +58,7 @@ void Client__close_socket(struct Client* self){
 
 void Client__set_socket(struct Client* self, int transport_layer){
     if (transport_layer == 0) {
-        self->socket = socket(AF_INET, SOCK_STREAM, 0)
+        self->socket = socket(AF_INET, SOCK_STREAM, 0);
     } else {
         self->socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     }
@@ -71,16 +71,16 @@ void Client__change_socket(struct Client* self){
     Client__set_socket(&self, transport_layer);
 }
 
-void Client__tcp_connect(struct Client* self, const *char ip, int port) {
+void Client__tcp_connect(struct Client* self) {
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port);
-    inet_pton(AF_INET, ip, &server_addr.sin_addr.s_addr);
+    server_addr.sin_port = htons(SERVER_PORT);
+    inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
 
     if (connect(self->socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
         ESP_LOGE(TAG, "Error al conectar");
-        close(sock);
+        close(self->socket);
         return;
     }
 
@@ -103,33 +103,33 @@ void Client__tcp(struct Client* self){
     //}
 
     // Conectar al servidor
-    Client__tcp_connect(&self)
+    Client__tcp_connect(&self);
     
 
     char header[1024];
-    Client__recv(&self, header, sizeof(header))
-    struct Info unpacked_header = unpack(header)
+    Client__recv(&self, header, sizeof(header));
+    struct Info unpacked_header = unpack(header);
 
-    int transport_layer = unpacked_header.transport_layer
-    int id_protocol = unpacked_header.id_protocol
-    Client__set_config(&self, transport_layer, id_protocol)
+    int transport_layer = unpacked_header.transport_layer;
+    int id_protocol = unpacked_header.id_protocol;
+    Client__set_config(&self, transport_layer, id_protocol);
 
     while (1) {
         // enviar mensaje
         byte* msg = Client__handle_msg(self);
-        send(sock, msg, strlen(msg), 0);
+        send(self->socket, msg, strlen(msg), 0);
         // entrar en modo Deep Sleep por 60 segundo
         esp_deep_sleep_start();
 
         char header[1024];
-        Client__recv(&self, header, sizeof(header))
-        struct Info unpacked_header = unpack(header)
-        Client__set_config(&self, transport_layer, id_protocol)
+        Client__recv(&self, header, sizeof(header));
+        struct Info unpacked_header = unpack(header);
+        Client__set_config(&self, transport_layer, id_protocol);
         if (self->transport_layer != 0) {
-            break
+            break;
         }
     }
-    Client__change_socket(&self)
+    Client__change_socket(&self);
     return;
 }
 
