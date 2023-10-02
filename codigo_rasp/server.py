@@ -16,7 +16,7 @@ create_tables()
 
 # from pyinput import keyboard
 
-HOST = '127.0.0.1'  # Escucha en todas las interfaces disponibles
+HOST = '0.0.0.0'  # Escucha en todas las interfaces disponibles
 PORT = 1234       # Puerto en el que se escucha
 
 address = (HOST, PORT)

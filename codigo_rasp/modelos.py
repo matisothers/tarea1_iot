@@ -4,7 +4,7 @@ import datetime
 
 # Configuración de la base de datos
 db_config = {
-    'host': 'localhost', 
+    'host': '0.0.0.0', 
     'port': 5432, 
     'user': 'postgres', 
     'password': 'postgres', 
@@ -76,7 +76,7 @@ class Loss(BaseModel):
 def create_tables():
     with db:
         db.create_tables([Datos, Logs, Configuration, Loss])
-
+        print("tablas creadas")
 
 
 # Ahora puedes definir tus modelos específicos heredando de BaseModel
