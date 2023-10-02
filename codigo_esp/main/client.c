@@ -207,7 +207,7 @@ void Client__handle(struct Client* self){
 
     // Conectar al servidor
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
-        ESP_LOGE(TAG, "Error al conectar");
+        ESP_LOGE(TAG, "Error al conectar primer socket");
         close(sock);
         return;
     }
