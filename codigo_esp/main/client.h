@@ -19,12 +19,14 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 
+
 //Credenciales de WiFi
 
 #define WIFI_SSID "testIot"
 #define WIFI_PASSWORD "IotTeam2023"
 #define SERVER_IP     "192.168.4.1" // IP del servidor
-#define SERVER_PORT   1234
+#define SERVER_PORT_TCP   1234
+#define SERVER_PORT_TCP   1235
 
 // Variables de WiFi
 #define WIFI_CONNECTED_BIT BIT0
@@ -62,8 +64,9 @@ extern struct Client{
     int transport_layer;
     int id_protocol;
     int packet_id;
-    char * MAC;
-    int socket;
+    uint8_t* MAC;
+    int socket_tcp;
+    int socket_udp
 
 
     // void (*Client__init)(struct Client* self);

@@ -69,34 +69,41 @@ class Server:
     def __init__(self, transport_layer:int = 0, host:str=HOST, port:int=PORT, buff_size:int=1024, config=Config()) -> None:
         self.transport_layer = transport_layer
         self.host = host
-        self.port = port
-        self.socket = None
+        self.port_TCP = port
+        self.port_UDP = port+1
+        self.socket_TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket_TCP.bind((self.host,self.port_TCP))
+        self.socket_TCP.listen(5)
+        self.socket_UDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket_UDP.bind((self.host,self.port_UDP))
+        self.socket_UDP.listen(5)
+        self.connection, self.adress = self.socket_TCP.accept() # hace conexion TCP
+        
         self.buff_size = buff_size
-        self.address = (self.host, self.port)
-        self.set_socket()
+        
         self.config = config
 
     # Cerrar el socket actual para reemplazarlo por uno que utilice el nuevo protocolo
-    def set_socket(self) -> None:
-        print("Changing socket protocol")
-        if self.socket:
-            self.socket.close()
-            self.socket = None
-        if self.transport_layer == 0:
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.socket.bind(self.address)
-            self.socket.listen(10)
-        else:
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.socket.bind(self.address)
-            self.socket.listen(10)
-        print(f"{self.transport_layer} socket waiting for connections at port {self.port}")
+    # def set_socket(self) -> None:
+    #     print("Changing socket protocol")
+    #     if self.socket:
+    #         self.socket.close()
+    #         self.socket = None
+    #     if self.transport_layer == 0:
+    #         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #         self.socket.bind(self.address)
+    #         self.socket.listen(10)
+    #     else:
+    #         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #         self.socket.bind(self.address)
+    #         self.socket.listen(10)
+    #     print(f"{self.transport_layer} socket waiting for connections at port {self.port}")
     
     # Si el protocolo cambia, también lo hace el socket
-    def set_protocol(self, transport_layer:int) -> None:
-        if self.transport_layer != transport_layer:
-            self.transport_layer = transport_layer
-            self.set_socket()
+    # def set_protocol(self, transport_layer:int) -> None:
+    #     if self.transport_layer != transport_layer:
+    #         self.transport_layer = transport_layer
+    #         self.set_socket()
 
     def run(self):
         if self.transport_layer == 0:
@@ -197,38 +204,37 @@ class Server:
 
     
     def tcp_handle(self):
-        conn, addr = self.socket.accept()
-        mac = addr[0]
-        with conn:
-            print(f'{addr} has connected')
-            self.create_log(device=mac)
+        mac = self.address[0]
+        #with self.connection: # no deberia cerrar socket
+        print(f'{self.address} has connected')
+        self.create_log(device=mac)
+        header = self.parse_header()
+        # Enviar la configuración al microcontrolador
+        print("sending header")
+        self.connection.send(header)
+        print("Header sent")
+        while True:
+            # Esperar respuesta del mensaje
+            data = self.connection.recv(self.buff_size)
+            print(data)
+            # Guardar mensaje en la base datos con la data recibida
+            # table_data = self.parse_body(data)
+            # Datos.create(**table_data) # insertar datos en la base de datos
+
+            # Consultar a la base de datos la configuración actual
+            config = self.config.get()
             header = self.parse_header()
-            # Enviar la configuración al microcontrolador
-            print("sending header")
-            conn.send(header)
-            print("Header sent")
-            while True:
-                # Esperar respuesta del mensaje
-                data = conn.recv(self.buff_size)
-                print(data)
-                # Guardar mensaje en la base datos con la data recibida
-                # table_data = self.parse_body(data)
-                # Datos.create(**table_data) # insertar datos en la base de datos
+            self.connection.send(header)
+            #header = self.parse_header()
+            # Enviar la configuración
+            #conn.sendto(header, addr)
+            # Enviar la información al cliente
 
-                # Consultar a la base de datos la configuración actual
-                config = self.config.get()
-                header = self.parse_header()
-                conn.send(header)
-                #header = self.parse_header()
-                # Enviar la configuración
-                #conn.sendto(header, addr)
-                # Enviar la información al cliente
-
-                if config['transport_layer'] != 0:
-                    break
+            if config['transport_layer'] != 0:
+                break
         config = self.config.get()
         tl = config['transport_layer']
-        self.set_protocol(tl)
+        self.transport_layer = tl
         self.run()
 
 
@@ -236,7 +242,7 @@ class Server:
         connected_clients = []
         while True:
             # Recibimos mensaje
-            data, addr = self.socket.recvfrom(self.buff_size)
+            data, addr = self.socket_UDP.recvfrom(self.buff_size)
             print(data)
             mac = addr[0]
             if mac not in connected_clients:
@@ -245,7 +251,7 @@ class Server:
                 self.create_log(device=mac)
                 # Enviamos header con la configuración
                 header = self.parse_header()
-                self.socket.sendto(header, addr)
+                self.socket_UDP.sendto(header, addr)
             else:
                 # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
                 # table_data = self.parse_body(data)
@@ -254,7 +260,7 @@ class Server:
                 config = self.config.get()
                 header = self.parse_header()
                 # Enviar la configuración
-                self.socket.sendto(header, addr)
+                self.socket_UDP.sendto(header, addr)
                 if config['transport_layer'] != 1:
                     break
 

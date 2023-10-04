@@ -13,9 +13,51 @@
 // #include "nvs_flash.h"
 // #include "lwip/sockets.h" // Para sockets
 
+#define MAC_ADDR_SIZE 6
+
+struct Message {
+    uint16_t id;
+    uint8_t MAC[6];
+    uint8_t transport_layer;
+    uint8_t id_protocol;
+    uint16_t length;
+    uint8_t* body;
+};
+//usar memcpy para agregar el body
 
 
+uint8_t get_mac_address() {
+    uint8_t mac[MAC_ADDR_SIZE];
+    esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
+    ESP_LOGI("MAC address", "MAC address: %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    return mac
+}
 
+struct Message Client__create_msg(struct Client* self, byte* body){
+    struct Message msg;
+    msg.id = 12345;
+    msg.MAC = self->MAC;
+    msg.transport_layer = self->transport_layer;
+    msg.id_protocol = self->id_protocol;
+    msg.length = 10 + strlen(body);
+    memcpy(msg.body, body, strlen(body)+1)
+    return msg
+}
+
+byte* pack(struct Message* msg) {
+    int length_msg = msg->length;
+    //int length_packet = 12 + length_msg;
+    byte * packet = malloc(length_packet);
+   
+    memcpy(packet, msg->id, 2);
+    memcpy(packet + 2, msg->MAC, 6);
+    memcpy(packet + 8, msg->transport_layer, 1);
+    memcpy(packet + 9, msg->id_protocol, 1);
+
+    memcpy(packet + 10, msg->length, 2);
+    memcpy(packet + 12, msg->body, length_msg-10);
+    return packet;
+}
 
 
 void Client__init(struct Client* self){
@@ -23,14 +65,21 @@ void Client__init(struct Client* self){
     self->transport_layer = 0;
     self->id_protocol = 0;
     self->packet_id = 0;
-    self->MAC = "123456";
-    // por defecto TCP
-    self->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (self->socket < 0) {
-        ESP_LOGE(TAG,"Error al crear el socket");
+    self->MAC = get_mac_address();
+    //Tendremos dos sockets
+    self->socket_tcp = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    self->socket_udp = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+    if (self->socket_tcp < 0) {
+        ESP_LOGE(TAG,"Error al crear el socket TCP");
         return;
-    }else{
-        ESP_LOGI(TAG,"FUNCIONO");
+    };
+    if (self->socket_udp < 0){
+        ESP_LOGE(TAG,"Error al crear el socket UDP");
+        return;
+    }
+    else{
+        ESP_LOGI(TAG,"Sockets creados con exito");
+        Client__tcp_connect(self);
         return;
     }
 }
@@ -77,10 +126,11 @@ void Client__change_socket(struct Client* self){
 }
 
 void Client__tcp_connect(struct Client* self) {
+    ESP_LOGI(TAG,"Conectando SOCKET TCP");
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
+    server_addr.sin_port = htons(SERVER_PORT_TCP);
     inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
 
     if (connect(self->socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
@@ -88,8 +138,7 @@ void Client__tcp_connect(struct Client* self) {
         close(self->socket);
         return;
     }
-
-    
+    ESP_LOGI(TAG,"Conectando con exito");
 }
 
 /*Manda un paquete y hace deep sleep 60s luego repite el proceso*/
@@ -108,33 +157,37 @@ void Client__tcp(struct Client* self){
     //}
 
     // Conectar al servidor
-    Client__tcp_connect(self);
     
 
     char header[1024];
     Client__recv(self, header, sizeof(header));
     struct Info unpacked_header = unpack(header);
-
     int transport_layer = unpacked_header.transport_layer;
     int id_protocol = unpacked_header.id_protocol;
+    
     Client__set_config(self, transport_layer, id_protocol);
 
-    while (1) {
-        // enviar mensaje
-        byte* msg = Client__handle_msg(self);
-        send(self->socket, msg, strlen(msg), 0);
-        // entrar en modo Deep Sleep por 60 segundo
-        esp_deep_sleep_start();
+    //while (1) {
+    // enviar mensaje
+    byte* body = Client__create_body(self);
+    struct Message msg = Client__create_msg(self, body);
+    byte* packet = pack_new(msg); 
 
-        char header[1024];
-        Client__recv(self, header, sizeof(header));
-        struct Info unpacked_header = unpack(header);
-        Client__set_config(self, transport_layer, id_protocol);
-        if (self->transport_layer != 0) {
-            break;
-        }
-    }
-    Client__change_socket(self);
+    //byte* msg = Client__handle_msg(self);
+    send(self->socket_tcp, packet, strlen(msg), 0);
+    // entrar en modo Deep Sleep por 60 segundo
+    ESP_LOGI(TAG, "Mensaje enviado, procediendo a mimir");
+    esp_deep_sleep_start();
+    ESP_LOGI(TAG, "wenos dias desperte");
+
+    // char header[1024];
+    // Client__recv(self, header, sizeof(header));
+    // struct Info unpacked_header = unpack(header);
+    // Client__set_config(self, transport_layer, id_protocol);
+    // if (self->transport_layer != 0) {
+    //     break;
+    // }
+    //}
     return;
 }
 
@@ -144,19 +197,18 @@ void Client__udp(struct Client* self){
     struct sockaddr_in server_addr;
     socklen_t server_struct_length = sizeof(server_addr);
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
+    server_addr.sin_port = htons(SERVER_PORT_UDP);
     inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
 
-    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    int sock = self->socket_udp;
 
-    if(sock < 0){
-        printf("Error while creating socket\n");
-        return;
-    }
-    printf("Socket created successfully\n");
 
-    byte* msg = Client__handle_msg(self);
-    sendto(sock, msg, strlen(msg), 0, (struct sockaddr*)&server_addr, server_struct_length);
+    // enviar mensaje
+    byte* body = Client__create_body(self);
+    struct Message msg = Client__create_msg(self, body);
+    byte* packet = pack_new(msg); 
+    //byte* msg = Client__handle_msg(self);
+    sendto(sock, packet, strlen(msg), 0, (struct sockaddr*)&server_addr, server_struct_length);
 
     // Receive the server's response:
     char server_message[128];
@@ -169,8 +221,6 @@ void Client__udp(struct Client* self){
     printf("Server's response: %s\n", server_message);
     struct Info info = unpack(server_message);
     Client__set_config(self,info.transport_layer, info.id_protocol);
-
-
     return;
 }
 
@@ -184,6 +234,36 @@ void set_header_to_msg(struct Client* self, byte* buffer, int body_lenght){
     self->packet_id++;
 }
 
+
+byte* Client__create_body(){
+    // crear body según el id_protocol
+    int id_protocol = Client__get_id_protocol(self);
+    int arr[5] = [1, 5, 15, 15+7*4, 15+12000*sizeof(float)] 
+    int body_size = arr[id_protocol];
+
+    byte* message = (byte*) malloc(body_size * sizeof(byte));
+
+    uint8_t batt_level = batt_level();
+    int bytes_acc = arr[0];
+    memcpy(message, &batt, 1);
+    if (id_protocol == 1){
+        unsigned long timestamp = (unsigned long) time(NULL);
+        memcpy(message + bytes_acc, &timestamp, 4);
+        bytes_acc += arr[1];
+    } else if (id_protocol == 2){
+        struct THPC_Data tdata = generate_THPC_Data();
+        memcpy(message + bytes_acc, &tdata, 10);
+        bytes_acc += arr[2];
+    } else if (id_protocol == 3){
+        struct kpi_data kdata = generate_kpi_data();
+        memcpy(message + bytes_acc, &kdata, 7*4);
+        bytes_acc += arr[3];
+    } else if (id_protocol == 4){
+        float *fdata = malloc(12000 * sizeof(float));
+        acc_sensor(fdata);
+        memcpy(message + bytes_acc, (byte *)fdata, 12000 * sizeof(float));
+    }
+}
 
 // función que retorna el mensaje (headers+body) empaquetado
 byte* Client__handle_msg(struct Client* self){
@@ -241,47 +321,51 @@ byte* Client__handle_msg(struct Client* self){
 }
 
 void Client__handle(struct Client* self){ 
-    // Se inicia la conexión con socket TCP para obtener transport_layer e id_protocol
+    // // Se inicia la conexión con socket TCP para obtener transport_layer e id_protocol
 
-    struct sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
-    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
-    inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
+    // struct sockaddr_in server_addr;
+    // server_addr.sin_family = AF_INET;
+    // server_addr.sin_port = htons(SERVER_PORT_TCP);
+    // server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
+    // inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
 
-    // Conectar al servidor
-    int code = connect(self->socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
-    if (code < 0) {
-        ESP_LOGE(TAG, "Error al conectar primer socket: %d", code);
-        close(self->socket);
-        return;
-    };
+    // // Conectar al servidor
+    // int code = connect(self->socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    // if (code < 0) {
+    //     ESP_LOGE(TAG, "Error al conectar primer socket: %d", code);
+    //     close(self->socket);
+    //     return;
+    // };
     
-    ESP_LOGI("ASD", "CONECTADO CON EXITO");
+    // ESP_LOGI("ASD", "CONECTADO CON EXITO");
     
 
-    // Recibir respuesta
+    // // Recibir respuesta
 
-    byte rx_buffer[128];
-    ESP_LOGI(TAG, "ESPERANDO RESPUESTA");
-    int rx_len = recv(self->socket, rx_buffer, sizeof(rx_buffer) - 1, 0);
-    ESP_LOGI(TAG, "RESPUESTA RECIBIDA");
-    if (rx_len < 0) {
-        ESP_LOGE(TAG, "Error al recibir datos");
-        return;
-    }
-    ESP_LOGI(TAG, "Datos recibidos: %s", rx_buffer);
+    // byte rx_buffer[128];
+    // ESP_LOGI(TAG, "ESPERANDO RESPUESTA");
+    // int rx_len = recv(self->socket, rx_buffer, sizeof(rx_buffer) - 1, 0);
+    // ESP_LOGI(TAG, "RESPUESTA RECIBIDA");
+    // if (rx_len < 0) {
+    //     ESP_LOGE(TAG, "Error al recibir datos, codigo: %d", rx_len);
+    //     return;
+    // }
+    // ESP_LOGI(TAG, "Datos recibidos: %s", rx_buffer);
 
-    // ver respuesta y cambiar protocol y transport layer
+    // // ver respuesta y cambiar protocol y transport layer
 
-    struct Info info = unpack(rx_buffer);
-    Client__set_config(self, info.transport_layer, info.id_protocol);
+    // struct Info info = unpack(rx_buffer);
+    // Client__set_config(self, info.transport_layer, info.id_protocol);
+
+    // ESP_LOGI(TAG, "Configuracion Inicial seteada");
         
     // Close the socket:
-    //close(sock);
+    // close(self->socket);
     // Teniendo la configuración, utilizar el socket correspondiente (TCP, UDP) y enviar los datos según el protocolo (0, 1, 2, 3, 4)
     while (1){
-        if (Client__get_transport_layer(self) == 0){
+        //Client__set_socket(self,Client__get_transport_layer(self));
+        int transport_layer = Client__get_transport_layer(self);
+        if (transport_layer == 0){
             // Utilizar TCP
             Client__tcp(self);
             //
@@ -303,7 +387,6 @@ byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char 
     int length_msg = strlen(msg);
     int length_packet = 12 + length_msg;
     byte * packet = malloc(length_packet);
-    
    
     memcpy(packet, &packet_id, 2);
     memcpy(packet + 2, mac, 6);
