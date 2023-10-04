@@ -1,4 +1,3 @@
-
 #include "client.h"
 
 
@@ -214,12 +213,13 @@ void app_main(void){
     */
 
     struct Client self;
-    Client__init(&self);
+    
 
     nvs_init();
     wifi_init_sta(WIFI_SSID, WIFI_PASSWORD);
     ESP_LOGI(TAG,"Conectado a WiFi!\n");
 
+    Client__init(&self);
     Client__handle(&self);
 }
 

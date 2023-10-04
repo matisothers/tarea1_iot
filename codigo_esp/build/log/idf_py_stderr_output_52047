@@ -1,0 +1,744 @@
+[0;33m--- idf_monitor on /dev/cu.usbserial-0001 115200 ---[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131
+[0m
+[0;33m0x400e3051: netconn_new_with_proto_and_callback at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:161
+[0m
+[0;33m0x400d86a9: lwip_socket at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/sockets.c:1720 (discriminator 4)
+[0m
+[0;33m0x400d5dc9: socket at /Users/mati/esp/esp-idf/components/lwip/include/lwip/sockets.h:48
+ (inlined by) Client__init at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:26
+[0m
+[0;33m0x400d5da1: app_main at /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:217
+[0m
+[0;33m0x400f05e0: main_task at /Users/mati/esp/esp-idf/components/freertos/app_startup.c:208 (discriminator 13)
+[0m
+[0;33m0x40087e21: vPortTaskWrapper at /Users/mati/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:162
+[0m
+[0;33m0x40080400: _init at ??:?
+[0m
+[0;33m0x40081064: call_start_cpu1 at /Users/mati/esp/esp-idf/components/esp_system/port/cpu_start.c:170
+[0m
+[0;33m0x4008169a: panic_abort at /Users/mati/esp/esp-idf/components/esp_system/panic.c:452
+[0m
+[0;33m0x40085811: esp_system_abort at /Users/mati/esp/esp-idf/components/esp_system/port/esp_system_chip.c:93
+[0m
+[0;33m0x4008ad3d: __assert_func at /Users/mati/esp/esp-idf/components/newlib/assert.c:81
+[0m
+[0;33m0x400d8787: tcpip_send_msg_wait_sem at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/tcpip.c:449 (discriminator 1)
+[0m
+[0;33m0x400e3025: netconn_apimsg at /Users/mati/esp/esp-idf/components/lwip/lwip/src/api/api_lib.c:131

@@ -1,0 +1,53 @@
+[0/1] Re-running CMake...
+-- Building ESP-IDF components for target esp32
+-- Project sdkconfig file /Users/mati/Desktop/tarea1_iot/codigo_esp/sdkconfig
+-- Compiler supported targets: xtensa-esp32-elf
+-- App "main" version: f3db3fa-dirty
+-- Adding linker script /Users/mati/Desktop/tarea1_iot/codigo_esp/build/esp-idf/esp_system/ld/memory.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_system/ld/esp32/sections.ld.in
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.api.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.libgcc.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.newlib-data.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.syscalls.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.newlib-funcs.ld
+-- Adding linker script /Users/mati/esp/esp-idf/components/soc/esp32/ld/esp32.peripherals.ld
+-- Components: app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_bootloader_format esp_coex esp_common esp_eth esp_event esp_gdbstub esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_system esp_timer esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip main mbedtls mqtt newlib nvs_flash nvs_sec_provider openthread partition_table perfmon protobuf-c protocomm pthread sdmmc soc spi_flash spiffs tcp_transport ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant xtensa
+-- Component paths: /Users/mati/esp/esp-idf/components/app_trace /Users/mati/esp/esp-idf/components/app_update /Users/mati/esp/esp-idf/components/bootloader /Users/mati/esp/esp-idf/components/bootloader_support /Users/mati/esp/esp-idf/components/bt /Users/mati/esp/esp-idf/components/cmock /Users/mati/esp/esp-idf/components/console /Users/mati/esp/esp-idf/components/cxx /Users/mati/esp/esp-idf/components/driver /Users/mati/esp/esp-idf/components/efuse /Users/mati/esp/esp-idf/components/esp-tls /Users/mati/esp/esp-idf/components/esp_adc /Users/mati/esp/esp-idf/components/esp_app_format /Users/mati/esp/esp-idf/components/esp_bootloader_format /Users/mati/esp/esp-idf/components/esp_coex /Users/mati/esp/esp-idf/components/esp_common /Users/mati/esp/esp-idf/components/esp_eth /Users/mati/esp/esp-idf/components/esp_event /Users/mati/esp/esp-idf/components/esp_gdbstub /Users/mati/esp/esp-idf/components/esp_hid /Users/mati/esp/esp-idf/components/esp_http_client /Users/mati/esp/esp-idf/components/esp_http_server /Users/mati/esp/esp-idf/components/esp_https_ota /Users/mati/esp/esp-idf/components/esp_https_server /Users/mati/esp/esp-idf/components/esp_hw_support /Users/mati/esp/esp-idf/components/esp_lcd /Users/mati/esp/esp-idf/components/esp_local_ctrl /Users/mati/esp/esp-idf/components/esp_mm /Users/mati/esp/esp-idf/components/esp_netif /Users/mati/esp/esp-idf/components/esp_netif_stack /Users/mati/esp/esp-idf/components/esp_partition /Users/mati/esp/esp-idf/components/esp_phy /Users/mati/esp/esp-idf/components/esp_pm /Users/mati/esp/esp-idf/components/esp_psram /Users/mati/esp/esp-idf/components/esp_ringbuf /Users/mati/esp/esp-idf/components/esp_rom /Users/mati/esp/esp-idf/components/esp_system /Users/mati/esp/esp-idf/components/esp_timer /Users/mati/esp/esp-idf/components/esp_wifi /Users/mati/esp/esp-idf/components/espcoredump /Users/mati/esp/esp-idf/components/esptool_py /Users/mati/esp/esp-idf/components/fatfs /Users/mati/esp/esp-idf/components/freertos /Users/mati/esp/esp-idf/components/hal /Users/mati/esp/esp-idf/components/heap /Users/mati/esp/esp-idf/components/http_parser /Users/mati/esp/esp-idf/components/idf_test /Users/mati/esp/esp-idf/components/ieee802154 /Users/mati/esp/esp-idf/components/json /Users/mati/esp/esp-idf/components/log /Users/mati/esp/esp-idf/components/lwip /Users/mati/Desktop/tarea1_iot/codigo_esp/main /Users/mati/esp/esp-idf/components/mbedtls /Users/mati/esp/esp-idf/components/mqtt /Users/mati/esp/esp-idf/components/newlib /Users/mati/esp/esp-idf/components/nvs_flash /Users/mati/esp/esp-idf/components/nvs_sec_provider /Users/mati/esp/esp-idf/components/openthread /Users/mati/esp/esp-idf/components/partition_table /Users/mati/esp/esp-idf/components/perfmon /Users/mati/esp/esp-idf/components/protobuf-c /Users/mati/esp/esp-idf/components/protocomm /Users/mati/esp/esp-idf/components/pthread /Users/mati/esp/esp-idf/components/sdmmc /Users/mati/esp/esp-idf/components/soc /Users/mati/esp/esp-idf/components/spi_flash /Users/mati/esp/esp-idf/components/spiffs /Users/mati/esp/esp-idf/components/tcp_transport /Users/mati/esp/esp-idf/components/ulp /Users/mati/esp/esp-idf/components/unity /Users/mati/esp/esp-idf/components/usb /Users/mati/esp/esp-idf/components/vfs /Users/mati/esp/esp-idf/components/wear_levelling /Users/mati/esp/esp-idf/components/wifi_provisioning /Users/mati/esp/esp-idf/components/wpa_supplicant /Users/mati/esp/esp-idf/components/xtensa
+-- Configuring done (9.6s)
+-- Generating done (1.0s)
+-- Build files have been written to: /Users/mati/Desktop/tarea1_iot/codigo_esp/build
+[1/12] Performing build step for 'bootloader'
+[1/1] cd /Users/mati/Desktop/tarea1_iot/codigo_esp/build/bootloader/esp-idf/esptool_py && /Users/mati/.espressif/python_env/idf5.2_py3.10_env/bin/python /Users/mati/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /Users/mati/Desktop/tarea1_iot/codigo_esp/build/bootloader/bootloader.bin
+Bootloader binary size 0x6910 bytes. 0x6f0 bytes (6%) free.
+[2/12] No install step for 'bootloader'
+[3/12] Completed 'bootloader'
+[4/12] Building C object esp-idf/esp_app_format/CMakeFiles/__idf_esp_app_format.dir/esp_app_desc.c.obj
+[5/12] Linking C static library esp-idf/esp_app_format/libesp_app_format.a
+[6/12] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj
+In file included from /Users/mati/Desktop/tarea1_iot/codigo_esp/main/main.c:2:
+/Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.h:72:1: warning: useless storage class specifier in empty declaration
+   72 | };
+      | ^
+[7/12] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/client.c.obj
+In file included from /Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.c:4:
+/Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.h:72:1: warning: useless storage class specifier in empty declaration
+   72 | };
+      | ^
+/Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.h:32:27: warning: 's_wifi_event_group' defined but not used [-Wunused-variable]
+   32 | static EventGroupHandle_t s_wifi_event_group;
+      |                           ^~~~~~~~~~~~~~~~~~
+/Users/mati/Desktop/tarea1_iot/codigo_esp/main/client.h:31:12: warning: 's_retry_num' defined but not used [-Wunused-variable]
+   31 | static int s_retry_num = 0;
+      |            ^~~~~~~~~~~
+[8/12] Linking C static library esp-idf/main/libmain.a
+[9/12] Generating ld/sections.ld
+[10/12] Linking CXX executable main.elf
+[11/12] Generating binary image from built executable
+esptool.py v4.7.dev1
+Creating esp32 image...
+Merged 26 ELF sections
+Successfully created esp32 image.
+Generated /Users/mati/Desktop/tarea1_iot/codigo_esp/build/main.bin
+[12/12] cd /Users/mati/Desktop/tarea1_iot/codigo_esp/build/esp-idf/esptool_py && /Users/mati/.espressif/python_env/idf5.2_py3.10_env/bin/python /Users/mati/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /Users/mati/Desktop/tarea1_iot/codigo_esp/build/partition_table/partition-table.bin /Users/mati/Desktop/tarea1_iot/codigo_esp/build/main.bin
+main.bin binary size 0xbd670 bytes. Smallest app partition is 0x100000 bytes. 0x42990 bytes (26%) free.

@@ -66,7 +66,7 @@ class Config:
 
 # TODO: revisar si es necesario limitar la cantidad de conexiones (self.socket.listen(conns))
 class Server:
-    def __init__(self, transport_layer:int = 0, host:str='127.0.0.1', port:int=1234, buff_size:int=1024, config=Config()) -> None:
+    def __init__(self, transport_layer:int = 0, host:str=HOST, port:int=PORT, buff_size:int=1024, config=Config()) -> None:
         self.transport_layer = transport_layer
         self.host = host
         self.port = port
@@ -85,10 +85,11 @@ class Server:
         if self.transport_layer == 0:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.bind(self.address)
-            self.socket.listen()
+            self.socket.listen(10)
         else:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.socket.bind(self.address)
+            self.socket.listen(10)
         print(f"{self.transport_layer} socket waiting for connections at port {self.port}")
     
     # Si el protocolo cambia, también lo hace el socket
@@ -203,7 +204,9 @@ class Server:
             self.create_log(device=mac)
             header = self.parse_header()
             # Enviar la configuración al microcontrolador
-            conn.sendto(header, addr)
+            print("sending header")
+            conn.send(header)
+            print("Header sent")
             while True:
                 # Esperar respuesta del mensaje
                 data = conn.recv(self.buff_size)
@@ -215,7 +218,7 @@ class Server:
                 # Consultar a la base de datos la configuración actual
                 config = self.config.get()
                 header = self.parse_header()
-                conn.sendto(header, addr)
+                conn.send(header)
                 #header = self.parse_header()
                 # Enviar la configuración
                 #conn.sendto(header, addr)

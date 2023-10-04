@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
+
 
 
 #include "esp_event.h"
@@ -14,6 +16,7 @@
 #include "lwip/sys.h"
 #include "nvs_flash.h"
 #include "lwip/sockets.h" // Para sockets
+#include <arpa/inet.h>
 #include <stdio.h>
 
 //Credenciales de WiFi

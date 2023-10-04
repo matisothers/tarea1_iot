@@ -16,6 +16,8 @@
 
 
 
+
+
 void Client__init(struct Client* self){
     esp_sleep_enable_timer_wakeup(60000000); // setea el sleep en 60 segundos
     self->transport_layer = 0;
@@ -23,10 +25,13 @@ void Client__init(struct Client* self){
     self->packet_id = 0;
     self->MAC = "123456";
     // por defecto TCP
-    self->socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (self->socket == -1) {
-        perror("Error al crear el socket");
-        exit(EXIT_FAILURE);
+    self->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (self->socket < 0) {
+        ESP_LOGE(TAG,"Error al crear el socket");
+        return;
+    }else{
+        ESP_LOGI(TAG,"FUNCIONO");
+        return;
     }
 }
 
@@ -58,7 +63,7 @@ void Client__close_socket(struct Client* self){
 
 void Client__set_socket(struct Client* self, int transport_layer){
     if (transport_layer == 0) {
-        self->socket = socket(AF_INET, SOCK_STREAM, 0);
+        self->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     } else {
         self->socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     }
@@ -66,9 +71,9 @@ void Client__set_socket(struct Client* self, int transport_layer){
 }
 
 void Client__change_socket(struct Client* self){
-    Client__close_socket(&self);
-    int transport_layer = Client__get_transport_layer(&self);
-    Client__set_socket(&self, transport_layer);
+    Client__close_socket(self);
+    int transport_layer = Client__get_transport_layer(self);
+    Client__set_socket(self, transport_layer);
 }
 
 void Client__tcp_connect(struct Client* self) {
@@ -103,16 +108,16 @@ void Client__tcp(struct Client* self){
     //}
 
     // Conectar al servidor
-    Client__tcp_connect(&self);
+    Client__tcp_connect(self);
     
 
     char header[1024];
-    Client__recv(&self, header, sizeof(header));
+    Client__recv(self, header, sizeof(header));
     struct Info unpacked_header = unpack(header);
 
     int transport_layer = unpacked_header.transport_layer;
     int id_protocol = unpacked_header.id_protocol;
-    Client__set_config(&self, transport_layer, id_protocol);
+    Client__set_config(self, transport_layer, id_protocol);
 
     while (1) {
         // enviar mensaje
@@ -122,14 +127,14 @@ void Client__tcp(struct Client* self){
         esp_deep_sleep_start();
 
         char header[1024];
-        Client__recv(&self, header, sizeof(header));
+        Client__recv(self, header, sizeof(header));
         struct Info unpacked_header = unpack(header);
-        Client__set_config(&self, transport_layer, id_protocol);
+        Client__set_config(self, transport_layer, id_protocol);
         if (self->transport_layer != 0) {
             break;
         }
     }
-    Client__change_socket(&self);
+    Client__change_socket(self);
     return;
 }
 
@@ -241,26 +246,26 @@ void Client__handle(struct Client* self){
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
+    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
     inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr.s_addr);
 
-    // Crear un socket
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock < 0) {
-        ESP_LOGE(TAG, "Error al crear el socket");
-        return;
-    }
-
     // Conectar al servidor
-    if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0) {
-        ESP_LOGE(TAG, "Error al conectar primer socket");
-        close(sock);
+    int code = connect(self->socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    if (code < 0) {
+        ESP_LOGE(TAG, "Error al conectar primer socket: %d", code);
+        close(self->socket);
         return;
-    }
+    };
+    
+    ESP_LOGI("ASD", "CONECTADO CON EXITO");
+    
 
     // Recibir respuesta
 
     byte rx_buffer[128];
-    int rx_len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
+    ESP_LOGI(TAG, "ESPERANDO RESPUESTA");
+    int rx_len = recv(self->socket, rx_buffer, sizeof(rx_buffer) - 1, 0);
+    ESP_LOGI(TAG, "RESPUESTA RECIBIDA");
     if (rx_len < 0) {
         ESP_LOGE(TAG, "Error al recibir datos");
         return;
@@ -270,10 +275,10 @@ void Client__handle(struct Client* self){
     // ver respuesta y cambiar protocol y transport layer
 
     struct Info info = unpack(rx_buffer);
-    Client__set_config(self,info.transport_layer, info.id_protocol);
+    Client__set_config(self, info.transport_layer, info.id_protocol);
         
     // Close the socket:
-    close(sock);
+    //close(sock);
     // Teniendo la configuración, utilizar el socket correspondiente (TCP, UDP) y enviar los datos según el protocolo (0, 1, 2, 3, 4)
     while (1){
         if (Client__get_transport_layer(self) == 0){
