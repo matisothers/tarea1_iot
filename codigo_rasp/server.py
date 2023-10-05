@@ -76,8 +76,7 @@ class Server:
         self.socket_TCP.listen(5)
         self.socket_UDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket_UDP.bind((self.host,self.port_UDP))
-        self.socket_UDP.listen(5)
-        self.connection, self.adress = self.socket_TCP.accept() # hace conexion TCP
+        self.connection, self.address = self.socket_TCP.accept() # hace conexion TCP
         
         self.buff_size = buff_size
         
@@ -204,10 +203,10 @@ class Server:
 
     
     def tcp_handle(self):
-        mac = self.address[0]
+    
         #with self.connection: # no deberia cerrar socket
         print(f'{self.address} has connected')
-        self.create_log(device=mac)
+       
         header = self.parse_header()
         # Enviar la configuración al microcontrolador
         print("sending header")
