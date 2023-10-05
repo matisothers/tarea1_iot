@@ -73,10 +73,9 @@ class Server:
         self.port_UDP = port+1
         self.socket_TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket_TCP.bind((self.host,self.port_TCP))
-        self.socket_TCP.listen(5)
+        
         self.socket_UDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket_UDP.bind((self.host,self.port_UDP))
-        self.connection, self.address = self.socket_TCP.accept() # hace conexion TCP
         
         self.buff_size = buff_size
         
@@ -105,10 +104,13 @@ class Server:
     #         self.set_socket()
 
     def run(self):
-        if self.transport_layer == 0:
-            self.tcp_handle()
-        else:
-            self.udp_handle()
+        while True:
+            config = self.config.get()
+            transport_layer = config['transport_layer']
+            if transport_layer == 0:
+                self.tcp_handle()
+            else:
+                self.udp_handle()
 
     def parse_header(self) -> bytes:
         id = random.randint(0,99) #int de 2 bytes
@@ -205,37 +207,29 @@ class Server:
     def tcp_handle(self):
     
         #with self.connection: # no deberia cerrar socket
-        print(f'{self.address} has connected')
+        
        
-        header = self.parse_header()
-        # Enviar la configuración al microcontrolador
-        print("sending header")
-        self.connection.send(header)
-        print("Header sent")
-        while True:
+        connection, address = self.socket_TCP.accept() # hace conexion TCP
+        with connection:
+            print(f'{address} has connected')
+            # TODO: Logear la conexión
+            # Logs.create(...)
+            header = self.parse_header()
+            # Enviar la configuración al microcontrolador
+            print("sending header")
+            connection.send(header)
+            print("Header sent")
+
             # Esperar respuesta del mensaje
             print("esperando recibir respuesta")
-            data = self.connection.recv(self.buff_size)
-            print("respuesta recibida: ", data)
-            # Guardar mensaje en la base datos con la data recibida
+            data = connection.recv(self.buff_size)
+            print("respuesta recibida: ", data.decode('utf-8'))
+            
+            # TODO: Guardar mensaje en la base datos con la data recibida
             # table_data = self.parse_body(data)
             # Datos.create(**table_data) # insertar datos en la base de datos
-
-            # Consultar a la base de datos la configuración actual
-            config = self.config.get()
-            header = self.parse_header()
-            self.connection.send(header)
-            #header = self.parse_header()
-            # Enviar la configuración
-            #conn.sendto(header, addr)
-            # Enviar la información al cliente
-
-            if config['transport_layer'] != 0:
-                break
-        config = self.config.get()
-        tl = config['transport_layer']
-        self.transport_layer = tl
-        self.run()
+            
+            connection.close()
 
 
     def udp_handle(self):

@@ -26,7 +26,7 @@
 #define WIFI_PASSWORD "IotTeam2023"
 #define SERVER_IP     "192.168.4.1" // IP del servidor
 #define SERVER_PORT_TCP   1234
-#define SERVER_PORT_TCP   1235
+#define SERVER_PORT_UDP   1235
 
 // Variables de WiFi
 #define WIFI_CONNECTED_BIT BIT0
@@ -85,12 +85,15 @@ int client__get_id_protocol(struct Client* self);
 void Client__set_config(struct Client* self, int transport_layer, int id_protocol);
 void Client__tcp(struct Client* self);
 void Client__udp(struct Client* self);
+void Client__tcp_connect(struct Client* self);
+byte* Client__create_body(struct Client* self);
 extern void Client__handle(struct Client* self);
 byte* Client__handle_msg(struct Client* self);
 void acc_sensor(float* data);
 uint8_t batt_level();
 struct kpi_data generate_kpi_data();
 struct THPC_Data generate_THPC_Data();
+struct Info unpack(byte * packet);
 byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg);
 void set_header_to_msg(struct Client* self,byte* buffer, int body_lenght);
 struct Info unpack(byte * packet);
