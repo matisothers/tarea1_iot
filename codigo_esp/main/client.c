@@ -64,7 +64,7 @@ byte* pack_struct(struct Message* msg) {
 
 
 void Client__init(struct Client* self){
-    esp_deep_sleep_enable_timer_wakeup(60*);  // setea el sleep en 60 segundos
+    esp_sleep_enable_timer_wakeup(60*1000);  // setea el sleep en 60 segundos
     self->transport_layer = 0;
     self->id_protocol = 0;
     self->packet_id = 0;

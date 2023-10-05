@@ -73,6 +73,7 @@ class Server:
         self.port_UDP = port+1
         self.socket_TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket_TCP.bind((self.host,self.port_TCP))
+        self.socket_TCP.listen()
         
         self.socket_UDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket_UDP.bind((self.host,self.port_UDP))
