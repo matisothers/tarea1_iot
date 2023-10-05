@@ -214,8 +214,9 @@ class Server:
         print("Header sent")
         while True:
             # Esperar respuesta del mensaje
+            print("esperando recibir respuesta")
             data = self.connection.recv(self.buff_size)
-            print(data)
+            print("respuesta recibida: ", data)
             # Guardar mensaje en la base datos con la data recibida
             # table_data = self.parse_body(data)
             # Datos.create(**table_data) # insertar datos en la base de datos
