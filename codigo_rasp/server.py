@@ -118,6 +118,7 @@ class Server:
             'length': length
         }
         body_packet = packet[12:] # struct.unpack('<{}s'.format(length), packet[12:])[0].decode('utf-8')
+        print("body bytes: ", body_packet)
         body = self.parse_body(body_packet, id_protocol)
         return dict(header, **body) # retorna los datos usados por la tabla Datos
 
@@ -226,6 +227,10 @@ class Server:
             print(f"[SERVER] Cliente {connected_clients.index(mac)} envió mensaje")
             print(data)
             
+            unpacked_message = self.unpack_msg(data)
+            print("[SERVER] Data unpacked: ", unpacked_message)
+            # Guardar mensaje en la base datos con la data recibida
+            self.create_data_row(unpacked_message)
            
             # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
             # table_data = self.parse_body(data)

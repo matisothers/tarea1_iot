@@ -21,7 +21,7 @@ struct Message {
     uint8_t transport_layer;
     uint8_t id_protocol;
     uint16_t length;
-    uint8_t* body;
+    byte* body;
 };
 //usar memcpy para agregar el body
 
@@ -42,7 +42,7 @@ struct Message Client__create_msg(struct Client* self, byte* body, int body_leng
     msg.transport_layer = self->transport_layer;
     msg.id_protocol = self->id_protocol;
     msg.length = 12 + body_length;
-    msg.body = (uint8_t*) malloc(body_length);
+    msg.body = (byte*) malloc(body_length);
     memcpy(msg.body, body, body_length);
     return msg;
 }
@@ -209,24 +209,24 @@ byte* Client__create_body(struct Client* self, int* length){
 
     byte* message = (byte*) malloc(body_size * sizeof(byte));
 
-    int batt = batt_level();
-    batt = 51;
-    ESP_LOGI(TAG, "Nivel de bateria: %02x", batt);
+    // int batt = batt_level();
+    int batt = 51;
+    ESP_LOGI(TAG, "Nivel de bateria: %i", batt);
     int bytes_acc = arr[0];
     memcpy(message, &batt, 1);
-    if (id_protocol == 1){
+    if (id_protocol >= 1){
         unsigned long timestamp = (unsigned long) time(NULL);
         memcpy(message + bytes_acc, &timestamp, 4);
         bytes_acc += arr[1];
-    } else if (id_protocol == 2){
+    } if (id_protocol >= 2){
         struct THPC_Data tdata = generate_THPC_Data();
         memcpy(message + bytes_acc, &tdata, 10);
         bytes_acc += arr[2];
-    } else if (id_protocol == 3){
+    } if (id_protocol == 3){
         struct kpi_data kdata = generate_kpi_data();
         memcpy(message + bytes_acc, &kdata, 7*4);
         bytes_acc += arr[3];
-    } else if (id_protocol == 4){
+    } if (id_protocol == 4){
         float *fdata = malloc(12000 * sizeof(float));
         acc_sensor(fdata);
         memcpy(message + bytes_acc, (byte *)fdata, 12000 * sizeof(float));
