@@ -11,6 +11,7 @@ import uuid
 from packet_parser import pack as msg_pack
 from modelos import create_tables
 from socket import error as SocketError
+import binascii
 
 create_tables()
 
@@ -105,7 +106,7 @@ class Server:
         id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
         header = {
             'header_id': id,
-            'header_mac': mac,
+            'header_mac': binascii.unhexlify(mac).decode(),
             'transport_layer': transport_layer,
             'id_protocol': id_protocol,
             'length': length
@@ -171,6 +172,7 @@ class Server:
         try:
             connection, address = self.socket_TCP.accept() # hace conexion TCP
             with connection:
+                connection.settimeout(3)
                 
                 print(f'{address} has connected')
                 # Logear la conexión
@@ -183,16 +185,19 @@ class Server:
                 
                 # Esperar respuesta del mensaje
                 print("[SERVER] Waiting for a message from client...")
-                data = connection.recv(self.buff_size)
-                print("[SERVER] Data received: ", data)
-                unpacked_message = self.unpack_msg(data)
+                try:
+                    data = connection.recv(self.buff_size)
+                    print("[SERVER] Data received: ", data)
+                    unpacked_message = self.unpack_msg(data)
 
-                print("[SERVER] The message is:", unpacked_message)
-                
-                # Guardar mensaje en la base datos con la data recibida
-                #self.create_data_row(unpacked_message)
+                    print("[SERVER] The message is:", unpacked_message)
+                    
+                    # Guardar mensaje en la base datos con la data recibida
+                    #self.create_data_row(unpacked_message)
 
-                # Cliente hace DEEP SLEEP -> se cierra la conexión
+                    # Cliente hace DEEP SLEEP -> se cierra la conexión
+                except:
+                    print("[SERVER] Timed out receiving data")
                 connection.close()
         except SocketError as e:
             print(e)

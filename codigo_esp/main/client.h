@@ -63,7 +63,7 @@ struct Info{
 extern struct Client{
     int transport_layer;
     int id_protocol;
-    int packet_id;
+    short packet_id;
     uint8_t* MAC;
     int socket_tcp;
     int socket_udp
