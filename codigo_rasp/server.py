@@ -104,9 +104,15 @@ class Server:
 
     def unpack_msg(self, packet:bytes):
         id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
+        try:
+            print(mac.decode())
+            print(binascii.unhexlify(mac.decode()))
+        except:
+            print("no funciono xdnt")
+            pass
         header = {
             'header_id': id,
-            'header_mac': binascii.unhexlify(mac).decode(),
+            'header_mac': mac.decode(),
             'transport_layer': transport_layer,
             'id_protocol': id_protocol,
             'length': length
@@ -172,7 +178,7 @@ class Server:
         try:
             connection, address = self.socket_TCP.accept() # hace conexion TCP
             with connection:
-                connection.settimeout(3)
+                connection.settimeout(10)
                 
                 print(f'{address} has connected')
                 # Logear la conexión
