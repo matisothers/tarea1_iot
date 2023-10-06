@@ -91,7 +91,7 @@ struct Message Client__create_msg(struct Client* self, byte* body, int body_leng
 extern void Client__handle(struct Client* self);
 byte* Client__handle_msg(struct Client* self);
 void acc_sensor(float* data);
-uint8_t batt_level();
+int batt_level();
 struct kpi_data generate_kpi_data();
 struct THPC_Data generate_THPC_Data();
 struct Info unpack(byte * packet);

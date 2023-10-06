@@ -40,16 +40,16 @@ class Datos(BaseModel):
     frec_z = FloatField(null=True)
 
     # Arrays
-    acc_x = ArrayField(FloatField)
-    acc_y = ArrayField(FloatField)
-    acc_z = ArrayField(FloatField)
+    acc_x = ArrayField(FloatField, null=True)
+    acc_y = ArrayField(FloatField, null=True)
+    acc_z = ArrayField(FloatField, null=True)
 
-    rgyr_x = ArrayField(FloatField)
-    rgyr_y = ArrayField(FloatField)
-    rgyr_z = ArrayField(FloatField)
+    rgyr_x = ArrayField(FloatField, null=True)
+    rgyr_y = ArrayField(FloatField, null=True)
+    rgyr_z = ArrayField(FloatField, null=True)
     
     timestamp = TimestampField()
-    id_device = CharField()
+    id_device = CharField(null=True)
 
 class Logs(BaseModel):
     id_device = CharField()

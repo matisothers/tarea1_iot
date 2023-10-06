@@ -106,7 +106,7 @@ class Server:
         return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
 
     def unpack_msg(self, packet:bytes):
-        id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
+        id, mac, transport_layer, id_protocol, length = struct.unpack('<2B6BBB2B', packet[:12])
 
         try:
             

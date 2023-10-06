@@ -209,7 +209,7 @@ byte* Client__create_body(struct Client* self, int* length){
 
     byte* message = (byte*) malloc(body_size * sizeof(byte));
 
-    uint8_t batt = batt_level();
+    int batt = batt_level();
     batt = 51;
     ESP_LOGI(TAG, "Nivel de bateria: %02x", batt);
     int bytes_acc = arr[0];
@@ -411,7 +411,7 @@ void acc_sensor(float* data){ // 12.000
     }
 }
 
-uint8_t batt_level(){
+int batt_level(){
     return (rand() % 100) + 1;
 }
 
