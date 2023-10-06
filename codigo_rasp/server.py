@@ -184,7 +184,7 @@ class Server:
                 # Esperar respuesta del mensaje
                 print("[SERVER] Waiting for a message from client...")
                 data = connection.recv(self.buff_size)
-                print("[SERVER] Data received!")
+                print("[SERVER] Data received: ", data)
                 unpacked_message = self.unpack_msg(data)
 
                 print("[SERVER] The message is:", unpacked_message)
@@ -204,26 +204,26 @@ class Server:
         while True:
             # Recibimos mensaje
             data, addr = self.socket_UDP.recvfrom(self.buff_size)
-            print(data)
             mac = addr[0]
             if mac not in connected_clients:
                 print(f'[SERVER] SE CONECTO {addr}')
                 connected_clients.append(mac)
                 self.create_log(device=mac)
-                # Enviamos header con la configuración
-                header = self.parse_header()
-                self.socket_UDP.sendto(header, addr)
-            else:
-                # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
-                # table_data = self.parse_body(data)
-                #Datos.create(**table_data) # insertar datos en la base de datos
-                # print(table_data)
-                config = self.config.get()
-                header = self.parse_header()
-                # Enviar la configuración
-                self.socket_UDP.sendto(header, addr)
-                if config['transport_layer'] != 1:
-                    break
+
+            print(f"[SERVER] Cliente {connected_clients.index(mac)} envió mensaje")
+            print(data)
+            
+           
+            # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
+            # table_data = self.parse_body(data)
+            #Datos.create(**table_data) # insertar datos en la base de datos
+            # print(table_data)
+            config = self.config.get()
+            header = self.parse_header()
+            # Enviar la configuración
+            self.socket_UDP.sendto(header, addr)
+            if config['transport_layer'] != 1:
+                break
 
         config = self.config.get()
         tl = config['transport_layer']
