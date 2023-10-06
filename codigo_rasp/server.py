@@ -107,14 +107,8 @@ class Server:
 
     def unpack_msg(self, packet:bytes):
         id, mac1,mac2,mac3,mac4,mac5,mac6, transport_layer, id_protocol, length = struct.unpack('<H6BBBH', packet[:12])
-        mac = ":".format([mac1,mac2,mac3,mac4,mac5,mac6])[1:]
-        try:
-            
-            print(mac.decode())
-            print(binascii.unhexlify(mac.decode()))
-        except:
-            print("no funciono xdnt")
-            pass
+        mac = f"{mac1}:{mac2}:{mac3}:{mac4}:{mac5}:{mac6}"
+  
         header = {
             'header_id': id,
             'header_mac': str(mac),
