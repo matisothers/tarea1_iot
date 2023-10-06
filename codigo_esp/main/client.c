@@ -186,7 +186,7 @@ void Client__udp(struct Client* self){
     printf("Server's response: %s\n", server_message);
     struct Info info = unpack(server_message);
     Client__set_config(self,info.transport_layer, info.id_protocol);
-    ESP_LOGI(TAG, "Config actualizada!")
+    ESP_LOGI(TAG, "Config actualizada!");
     return;
 }
 
