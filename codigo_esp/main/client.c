@@ -40,7 +40,7 @@ struct Message Client__create_msg(struct Client* self, byte* body, int body_leng
     memcpy(msg.MAC, &self->MAC, 6);
     msg.transport_layer = self->transport_layer;
     msg.id_protocol = self->id_protocol;
-    msg.length = 10 + body_length;
+    msg.length = 12 + body_length;
     msg.body = (uint8_t*) malloc(body_length);
     memcpy(msg.body, body, body_length);
     return msg;
@@ -50,14 +50,16 @@ byte* pack_struct(struct Message* msg) {
     int length_msg = msg->length;
     // int length_packet = 12 + length_msg;
     byte * packet = malloc(length_msg);
-   
+
+    //headers
     memcpy(packet, &msg->id, 2);
     memcpy(packet + 2, &msg->MAC, 6);
     memcpy(packet + 8, &msg->transport_layer, 1);
     memcpy(packet + 9, &msg->id_protocol, 1);
-
     memcpy(packet + 10, &msg->length, 2);
-    memcpy(packet + 12, &msg->body, length_msg-10);
+
+    //body
+    memcpy(packet + 12, &msg->body, length_msg-12);
     ESP_LOGI(TAG,"Headers puestos");
     return packet;
 }
@@ -132,15 +134,16 @@ void Client__tcp_connect(struct Client* self) {
 
 /*Manda un paquete y hace deep sleep 60s luego repite el proceso*/
 void Client__tcp(struct Client* self){
-
-    byte* body = Client__create_body(self);
-    struct Message msg = Client__create_msg(self, body);
+    int length;
+    byte* body = Client__create_body(self, &length);
+    ESP_LOGI(TAG, "EL LARGO DEL MENSAJE ES %i", length);
+    struct Message msg = Client__create_msg(self, body, length); 
     byte* packet = pack_struct(&msg); 
 
     //byte* msg = Client__handle_msg(self);
-    ESP_LOGI(TAG, "EL LARGO DEL MENSAJE ES %i", msg.length);
+    
     ESP_LOGI(TAG,"Comenzando a enviar datos");
-    send(self->socket_tcp, packet, msg.length, 0);
+    send(self->socket_tcp, packet, length, 0);
     // entrar en modo Deep Sleep por 60 segundo
     ESP_LOGI(TAG, "Mensaje enviado, procediendo a mimir");
     
@@ -163,8 +166,9 @@ void Client__udp(struct Client* self){
 
 
     // enviar mensaje
-    byte* body = Client__create_body(self);
-    struct Message msg = Client__create_msg(self, body);
+    int length;
+    byte* body = Client__create_body(self, &length);
+    struct Message msg = Client__create_msg(self, body, length);
     byte* packet = pack_struct(&msg); 
     //byte* msg = Client__handle_msg(self);
     sendto(sock, packet, msg.length, 0, (struct sockaddr*)&server_addr, server_struct_length);
@@ -194,7 +198,7 @@ void set_header_to_msg(struct Client* self, byte* buffer, int body_lenght){
 }
 
 
-byte* Client__create_body(struct Client* self){
+byte* Client__create_body(struct Client* self, int* length){
     // crear body según el id_protocol
     int id_protocol = Client__get_id_protocol(self);
     int arr[5] = {1, 5, 15, 15+7*4, 15+12000*sizeof(float)};
@@ -223,6 +227,7 @@ byte* Client__create_body(struct Client* self){
         memcpy(message + bytes_acc, (byte *)fdata, 12000 * sizeof(float));
     }
     ESP_LOGI(TAG,"Body creado");
+    *length = body_size;
     return message;
 }
 
@@ -278,6 +283,8 @@ byte* Client__handle_msg(struct Client* self){
     }
     // retornar headers + body
     
+    ESP_LOGI("handle_msg","packed final message: %s", message);
+    
     return message;
 }
 
@@ -287,11 +294,6 @@ void Client__handle(struct Client* self){
     ESP_LOGI(TAG,"Esperando recibir mensaje");
     if (recv(self->socket_tcp, buffer, 1024, 0) < 0) {
         ESP_LOGE(TAG, "Error al recibir datos.");
-        while (1)
-        {
-            esp_deep_sleep_start();
-        }
-        
         exit(EXIT_FAILURE);
     }
     ESP_LOGI(TAG, "Datos recibidos: %s", buffer);
@@ -322,21 +324,23 @@ void Client__handle(struct Client* self){
 
 // PACK UNPACK
 
-
-byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg) {
-    int length_msg = strlen(msg);
-    int length_packet = 12 + length_msg;
-    byte * packet = malloc(length_packet);
+// unused function
+// byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg) {
+//     int length_msg = strlen(msg);
+//     int length_packet = 12 + length_msg;
+//     byte * packet = malloc(length_packet);
    
-    memcpy(packet, &packet_id, 2);
-    memcpy(packet + 2, mac, 6);
-    memcpy(packet + 8, &transport_layer, 1);
-    memcpy(packet + 9, &id_protocol, 1);
+//     memcpy(packet, &packet_id, 2);
+//     memcpy(packet + 2, mac, 6);
+//     memcpy(packet + 8, &transport_layer, 1);
+//     memcpy(packet + 9, &id_protocol, 1);
 
-    memcpy(packet + 10, &length_packet, 2);
-    memcpy(packet + 12, msg, length_msg);
-    return packet;
-}
+//     memcpy(packet + 10, &length_packet, 2);
+//     memcpy(packet + 12, msg, length_msg);
+    
+//     ESP_LOGI("PACK","packeted_message: %s", packet);
+//     return packet;
+// }
 
 
 

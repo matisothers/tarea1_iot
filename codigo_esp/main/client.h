@@ -86,7 +86,8 @@ void Client__set_config(struct Client* self, int transport_layer, int id_protoco
 void Client__tcp(struct Client* self);
 void Client__udp(struct Client* self);
 void Client__tcp_connect(struct Client* self);
-byte* Client__create_body(struct Client* self);
+byte* Client__create_body(struct Client* self, int *length);
+struct Message Client__create_msg(struct Client* self, byte* body, int body_length);
 extern void Client__handle(struct Client* self);
 byte* Client__handle_msg(struct Client* self);
 void acc_sensor(float* data);

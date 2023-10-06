@@ -10,10 +10,8 @@ from datetime import datetime
 import uuid
 from packet_parser import pack as msg_pack
 from modelos import create_tables
-
-import binascii
-
 from socket import error as SocketError
+
 create_tables()
 
 # from pyinput import keyboard
@@ -83,28 +81,6 @@ class Server:
         self.buff_size = buff_size
         
         self.config = config
-
-    # Cerrar el socket actual para reemplazarlo por uno que utilice el nuevo protocolo
-    # def set_socket(self) -> None:
-    #     print("Changing socket protocol")
-    #     if self.socket:
-    #         self.socket.close()
-    #         self.socket = None
-    #     if self.transport_layer == 0:
-    #         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #         self.socket.bind(self.address)
-    #         self.socket.listen(10)
-    #     else:
-    #         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    #         self.socket.bind(self.address)
-    #         self.socket.listen(10)
-    #     print(f"{self.transport_layer} socket waiting for connections at port {self.port}")
-    
-    # Si el protocolo cambia, también lo hace el socket
-    # def set_protocol(self, transport_layer:int) -> None:
-    #     if self.transport_layer != transport_layer:
-    #         self.transport_layer = transport_layer
-    #         self.set_socket()
 
     def run(self):
         while True:
@@ -221,12 +197,13 @@ class Server:
                 print("sending header")
                 connection.send(header)
                 print("Header sent")
-
+                
                 # Esperar respuesta del mensaje
                 print("esperando recibir respuesta")
                 data = connection.recv(self.buff_size)
-                #bin_data = binascii.unhexlify(data)
-                #print(bin_data.decode())
+                unpacked_message = self.parse_body(data)
+                print(unpacked_message)
+
                 print("respuesta recibida: ", data)
                 
                 # TODO: Guardar mensaje en la base datos con la data recibida
@@ -272,40 +249,3 @@ class Server:
 
 s = Server()
 s.run()
-
-    
-
-"""
-# Servidor echo (UDP)
-def udp_connection():
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.bind(address)
-        buff_size = 1024
-        while True:
-            # Recibir mensaje
-            msg, addr = s.recvfrom(buff_size)
-            print(f"ESP message: {msg.decode()}")
-            
-            # Enviar respuesta
-            s.sendto(msg, addr)
-
-# Crea un socket para IPv4 y conexión TCP
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind(address)
-    s.listen()
-
-    print("El servidor está esperando conexiones en el puerto", PORT)
-
-    while True:
-        conn, addr = s.accept()  # Espera una conexión
-        with conn:
-            print('Conectado por', addr)
-            data = conn.recv(1024)  # Recibe hasta 1024 bytes del cliente
-            if data:
-                print("Recibido: ", data.decode('utf-8'))
-                respuesta = "tu mensaje es: " + data.decode('utf-8')
-                conn.sendall(respuesta.encode('utf-8'))  # Envía la respuesta al cliente
-
-
-
-"""
