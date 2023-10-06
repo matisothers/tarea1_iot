@@ -137,7 +137,8 @@ class Server:
             # HEADERS + Batt_level + Timestamp 
             pass
         elif id_protocol == 2:
-            parsed_data = struct.unpack('<BLBiBi', body)
+            print(len(body))
+            parsed_data = struct.unpack('<BLBiBf', body)
             # Estructura del protocolo 1
             # HEADERS + Batt_level + Timestamp + Temp + Press + Hum +Co
             pass
