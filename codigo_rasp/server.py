@@ -11,6 +11,8 @@ import uuid
 from packet_parser import pack as msg_pack
 from modelos import create_tables
 
+import binascii
+
 
 create_tables()
 
@@ -224,7 +226,9 @@ class Server:
             # Esperar respuesta del mensaje
             print("esperando recibir respuesta")
             data = connection.recv(self.buff_size)
-            print("respuesta recibida: ", data.decode())
+            bin_data = binascii.unhexlify(data)
+            print(bin_data.decode())
+            print("respuesta recibida: ", data)
             
             # TODO: Guardar mensaje en la base datos con la data recibida
             # table_data = self.parse_body(data)
