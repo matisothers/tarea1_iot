@@ -103,7 +103,7 @@ class Server:
         return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
 
     def unpack_msg(self, packet:bytes):
-        id, mac, transport_layer, id_protocol, length = struct.unpack('<H6BBBH', packet[:12])
+        id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
 
         try:
             print(type(mac))
@@ -227,7 +227,7 @@ class Server:
             if mac not in connected_clients:
                 print(f'[SERVER] SE CONECTO {addr}')
                 connected_clients.append(mac)
-                self.create_log(device=mac)
+                # self.create_log(device=mac)
 
             print(f"[SERVER] Cliente {connected_clients.index(mac)} envió mensaje")
             print(data)
@@ -243,11 +243,6 @@ class Server:
             self.socket_UDP.sendto(header, addr)
             if config['transport_layer'] != 1:
                 break
-
-        config = self.config.get()
-        tl = config['transport_layer']
-        self.set_protocol(tl)
-        self.run()
 
 s = Server()
 s.run()
