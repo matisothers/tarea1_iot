@@ -188,16 +188,20 @@ class Server:
                 try:
                     data = connection.recv(self.buff_size)
                     print("[SERVER] Data received: ", data)
-                    unpacked_message = self.unpack_msg(data)
-
-                    print("[SERVER] The message is:", unpacked_message)
                     
+    
                     # Guardar mensaje en la base datos con la data recibida
                     #self.create_data_row(unpacked_message)
 
                     # Cliente hace DEEP SLEEP -> se cierra la conexión
-                except:
+                except SocketError as e:
+                    print(e)
                     print("[SERVER] Timed out receiving data")
+
+                else:
+                    unpacked_message = self.unpack_msg(data)
+                    print("[SERVER] The message is:", unpacked_message)
+                    
                 connection.close()
         except SocketError as e:
             print(e)
