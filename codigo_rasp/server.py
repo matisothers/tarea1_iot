@@ -224,7 +224,7 @@ class Server:
             # Esperar respuesta del mensaje
             print("esperando recibir respuesta")
             data = connection.recv(self.buff_size)
-            print("respuesta recibida: ", data.decode('utf-8'))
+            print("respuesta recibida: ", data.decode())
             
             # TODO: Guardar mensaje en la base datos con la data recibida
             # table_data = self.parse_body(data)
