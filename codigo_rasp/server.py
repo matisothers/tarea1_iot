@@ -117,7 +117,7 @@ class Server:
             pass
         header = {
             'header_id': id,
-            'header_mac': mac,
+            'header_mac': str(mac),
             'transport_layer': transport_layer,
             'id_protocol': id_protocol,
             'length': length
