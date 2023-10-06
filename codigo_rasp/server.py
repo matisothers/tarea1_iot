@@ -106,8 +106,8 @@ class Server:
         return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
 
     def unpack_msg(self, packet:bytes):
-        id, mac1,mac2,mac3,mac4,mac5,mac6, transport_layer, id_protocol, length = struct.unpack('<H6BBBH', packet[:12])
-        mac = f"{mac1}:{mac2}:{mac3}:{mac4}:{mac5}:{mac6}"
+        id, mac1,mac2,mac3,mac4,mac5,mac6, transport_layer, id_protocol, length = struct.unpack('<H6xBBH', packet[:12])
+        mac = f"{mac1}{mac2}:{mac3}{mac4}:{mac5}{mac6}"
   
         header = {
             'header_id': id,
