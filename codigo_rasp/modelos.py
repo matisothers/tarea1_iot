@@ -20,7 +20,7 @@ class BaseModel(Model):
 class Datos(BaseModel):
     # HEADER
     header_id = IntegerField()
-    header_mac = CharField(max_length=255)
+    header_mac = BlobField()
     transport_layer = CharField(max_length=3)
     id_protocol = IntegerField()
     length = IntegerField()
