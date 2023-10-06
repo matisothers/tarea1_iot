@@ -103,8 +103,12 @@ class Server:
         return struct.pack('<H6sBBH', id, mac, transport_layer, id_protocol, length)
 
     def unpack_msg(self, packet:bytes):
-        id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
+        id, mac, transport_layer, id_protocol, length = struct.unpack('<H6BBBH', packet[:12])
+
         try:
+            print(type(mac))
+            print(mac)
+            print(binascii.unhexlify(mac))
             print(mac.decode())
             print(binascii.unhexlify(mac.decode()))
         except:
@@ -112,7 +116,7 @@ class Server:
             pass
         header = {
             'header_id': id,
-            'header_mac': mac.decode(),
+            'header_mac': mac,
             'transport_layer': transport_layer,
             'id_protocol': id_protocol,
             'length': length
