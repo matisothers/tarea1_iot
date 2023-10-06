@@ -33,16 +33,16 @@ uint8_t get_mac_address() {
     return mac;
 }
 
-struct Message Client__create_msg(struct Client* self, byte* body){
+struct Message Client__create_msg(struct Client* self, byte* body, int body_length){
     struct Message msg;
     msg.id = 12345;
     ESP_LOGI("Create msg", "MAC address: %s", self->MAC);
     memcpy(msg.MAC, &self->MAC, 6);
     msg.transport_layer = self->transport_layer;
     msg.id_protocol = self->id_protocol;
-    msg.length = 10 + strlen(body);
-    msg.body = (uint8_t*) malloc(strlen(body)+1);
-    memcpy(msg.body, body, strlen(body)+1);
+    msg.length = 10 + body_length;
+    msg.body = (uint8_t*) malloc(body_length);
+    memcpy(msg.body, body, body_length);
     return msg;
 }
 
@@ -64,7 +64,7 @@ byte* pack_struct(struct Message* msg) {
 
 
 void Client__init(struct Client* self){
-    esp_sleep_enable_timer_wakeup(60*1000);  // setea el sleep en 60 segundos
+    esp_sleep_enable_timer_wakeup(6000000);  // setea el sleep en 60 segundos
     self->transport_layer = 0;
     self->id_protocol = 0;
     self->packet_id = 0;
@@ -138,6 +138,7 @@ void Client__tcp(struct Client* self){
     byte* packet = pack_struct(&msg); 
 
     //byte* msg = Client__handle_msg(self);
+    ESP_LOGI(TAG, "EL LARGO DEL MENSAJE ES %i", msg.length);
     ESP_LOGI(TAG,"Comenzando a enviar datos");
     send(self->socket_tcp, packet, msg.length, 0);
     // entrar en modo Deep Sleep por 60 segundo

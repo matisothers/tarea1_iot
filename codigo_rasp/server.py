@@ -13,7 +13,7 @@ from modelos import create_tables
 
 import binascii
 
-
+from socket import error as SocketError
 create_tables()
 
 # from pyinput import keyboard
@@ -208,33 +208,35 @@ class Server:
 
     
     def tcp_handle(self):
-    
-        #with self.connection: # no deberia cerrar socket
-        
-       
-        connection, address = self.socket_TCP.accept() # hace conexion TCP
-        with connection:
-            print(f'{address} has connected')
-            # TODO: Logear la conexión
-            # Logs.create(...)
-            header = self.parse_header()
-            # Enviar la configuración al microcontrolador
-            print("sending header")
-            connection.send(header)
-            print("Header sent")
 
-            # Esperar respuesta del mensaje
-            print("esperando recibir respuesta")
-            data = connection.recv(self.buff_size)
-            bin_data = binascii.unhexlify(data)
-            print(bin_data.decode())
-            print("respuesta recibida: ", data)
-            
-            # TODO: Guardar mensaje en la base datos con la data recibida
-            # table_data = self.parse_body(data)
-            # Datos.create(**table_data) # insertar datos en la base de datos
-            
-            connection.close()
+        #with self.connection: # no deberia cerrar socket
+        try:
+            connection, address = self.socket_TCP.accept() # hace conexion TCP
+            with connection:
+                print(f'{address} has connected')
+                # TODO: Logear la conexión
+                # Logs.create(...)
+                header = self.parse_header()
+                # Enviar la configuración al microcontrolador
+                print("sending header")
+                connection.send(header)
+                print("Header sent")
+
+                # Esperar respuesta del mensaje
+                print("esperando recibir respuesta")
+                data = connection.recv(self.buff_size)
+                #bin_data = binascii.unhexlify(data)
+                #print(bin_data.decode())
+                print("respuesta recibida: ", data)
+                
+                # TODO: Guardar mensaje en la base datos con la data recibida
+                # table_data = self.parse_body(data)
+                # Datos.create(**table_data) # insertar datos en la base de datos
+                
+                connection.close()
+        except SocketError as e:
+            print(e)
+            return
 
 
     def udp_handle(self):
