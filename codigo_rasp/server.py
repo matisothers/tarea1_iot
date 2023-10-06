@@ -104,19 +104,17 @@ class Server:
     def unpack_msg(self, packet:bytes):
         id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
         header = {
-            'id': id,
-            'mac': mac,
+            'header_id': id,
+            'header_mac': mac,
             'transport_layer': transport_layer,
             'id_protocol': id_protocol,
             'length': length
         }
-        body = packet[12:] # struct.unpack('<{}s'.format(length), packet[12:])[0].decode('utf-8')
-        return [header, body]
+        body_packet = packet[12:] # struct.unpack('<{}s'.format(length), packet[12:])[0].decode('utf-8')
+        body = self.parse_body(body_packet, id_protocol)
+        return dict(header, **body) # retorna los datos usados por la tabla Datos
 
-    def parse_body(self, msg:bytes) -> dict:
-        
-        header, body = self.unpack_msg(msg)
-        id_protocol = header["id_protocol"]
+    def parse_body(self, body:bytes, id_protocol:int) -> dict:
         data = ['batt_level', 'timestamp', 'temp', 'press', 'hum', 'co', 'rms', 'amp_x', 'frec_x','amp_y', 'frec_y','amp_z', 'frec_z']
         p4 = ['batt_level', 'timestamp', 'temp', 'press', 'hum', 'co', 'acc_x', 'acc_y', 'acc_z', 'rgyr_x', 'rgyr_y', 'rgyr_z'] 
         d = {}
@@ -149,67 +147,52 @@ class Server:
             d[data[k]] = parsed_data[k]
         return d
 
-
-    def save_to_database(self, msg: bytes):
-        header, body = self.unpack_msg(msg)
-        table_data = self.parse_body(body,header["id_protocol"])
-        # subir datos a la tabla Datos
-        Datos.create(**table_data)
-
-        # subir datos a la tabla Logs
-        id_device = header['mac']
-        transport_layer = header['transport_layer']
-        id_protocol = header['id_protocol']
-        now = datetime.now()
-        timestamp = datetime.timestamp(now)
-
-        # subir datos a la tabla Loss
-
-    def create_log(self, device):
+    def create_data_row(self, data:dict):
+        Datos.create(**data)
+        print("[SERVER] Creada fila de la tabla Datos:", data)
+    
+    def create_log_row(self, id_device):
         timestamp = datetime.now()
         config = self.config.get()
         print(config)
         log = {
-            'id_device': device,
+            'id_device': id_device,
             'transport_layer':config['transport_layer'],
             'id_protocol': config['id_protocol'],
             'timestamp': timestamp
         }
         print(log)
         Logs.create(**log)
-        print("[SERVER] CREADO LOG", log)
-
-    #def save_to_loss(self,timestamp:int,packet_loss:bytes):
+        print("[SERVER] Creada fila de la tabla Logs:", log)
 
 
     
     def tcp_handle(self):
-
-        #with self.connection: # no deberia cerrar socket
         try:
             connection, address = self.socket_TCP.accept() # hace conexion TCP
             with connection:
+                
                 print(f'{address} has connected')
-                # TODO: Logear la conexión
-                # Logs.create(...)
+                # Logear la conexión
+                # self.create_log_row(id_device=address[0])
                 header = self.parse_header()
                 # Enviar la configuración al microcontrolador
-                print("sending header")
+                print("[SERVER] Sending header")
                 connection.send(header)
-                print("Header sent")
+                print("[SERVER] Header sent")
                 
                 # Esperar respuesta del mensaje
-                print("esperando recibir respuesta")
+                print("[SERVER] Waiting for a message from client...")
                 data = connection.recv(self.buff_size)
-                unpacked_message = self.parse_body(data)
-                print(unpacked_message)
+                print("[SERVER] Data received!")
+                unpacked_message = self.unpack_msg(data)
 
-                print("respuesta recibida: ", data)
+                print("[SERVER] The message is:", unpacked_message)
                 
-                # TODO: Guardar mensaje en la base datos con la data recibida
-                # table_data = self.parse_body(data)
-                # Datos.create(**table_data) # insertar datos en la base de datos
-                
+                # Guardar mensaje en la base datos con la data recibida
+                #self.create_data_row(unpacked_message)
+
+                # Cliente hace DEEP SLEEP -> se cierra la conexión
                 connection.close()
         except SocketError as e:
             print(e)
