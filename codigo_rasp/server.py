@@ -33,7 +33,10 @@ class TL(Enum):
     UDP = 1
     
         
-        
+
+def prettify(mac_string):
+    return ':'.join('%02x' % ord(b) for b in mac_string)
+           
 
 def create_instance(self,datos:dict):
     Datos.create(**datos)
@@ -106,9 +109,7 @@ class Server:
         id, mac, transport_layer, id_protocol, length = struct.unpack('<H6sBBH', packet[:12])
 
         try:
-            print(type(mac))
-            print(mac)
-            print(binascii.unhexlify(mac))
+            
             print(mac.decode())
             print(binascii.unhexlify(mac.decode()))
         except:
@@ -186,7 +187,7 @@ class Server:
                 
                 print(f'{address} has connected')
                 # Logear la conexión
-                # self.create_log_row(id_device=address[0])
+                self.create_log_row(id_device=address[0])
                 header = self.parse_header()
                 # Enviar la configuración al microcontrolador
                 print("[SERVER] Sending header")
@@ -201,7 +202,7 @@ class Server:
                     
     
                     # Guardar mensaje en la base datos con la data recibida
-                    #self.create_data_row(unpacked_message)
+                    self.create_data_row(unpacked_message)
 
                     # Cliente hace DEEP SLEEP -> se cierra la conexión
                 except SocketError as e:

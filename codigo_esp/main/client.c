@@ -67,7 +67,7 @@ byte* pack_struct(struct Message* msg) {
 
 
 void Client__init(struct Client* self){
-    esp_sleep_enable_timer_wakeup(30000000);  // setea el sleep en 60 segundos
+    esp_sleep_enable_timer_wakeup(6000000000);  // setea el sleep en 60 segundos = 60000000
     self->transport_layer = 0;
     self->id_protocol = 0;
     self->packet_id = 0;
@@ -186,6 +186,7 @@ void Client__udp(struct Client* self){
     printf("Server's response: %s\n", server_message);
     struct Info info = unpack(server_message);
     Client__set_config(self,info.transport_layer, info.id_protocol);
+    ESP_LOGI(TAG, "Config actualizada!")
     return;
 }
 
@@ -209,7 +210,8 @@ byte* Client__create_body(struct Client* self, int* length){
     byte* message = (byte*) malloc(body_size * sizeof(byte));
 
     uint8_t batt = batt_level();
-    ESP_LOGI(TAG, "Nivel de bateria: %i",batt);
+    batt = 51;
+    ESP_LOGI(TAG, "Nivel de bateria: %02x", batt);
     int bytes_acc = arr[0];
     memcpy(message, &batt, 1);
     if (id_protocol == 1){
