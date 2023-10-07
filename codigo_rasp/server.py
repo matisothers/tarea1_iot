@@ -233,8 +233,6 @@ class Server:
                     print("[SERVER] Sending header")
                     connection.send(header)
                     print("[SERVER] Header sent")
-
-
             except:
                 print("no conecto")
                 pass
@@ -242,33 +240,34 @@ class Server:
             # Recibimos mensaje
             try:
                 data, addr = self.socket_UDP.recvfrom(self.buff_size) 
+                mac = addr[0]
+                if mac not in connected_clients:
+                    print(f'[SERVER] SE CONECTO {addr}')
+                    connected_clients.append(mac)
+                    # self.create_log(device=mac)
+                    print(f"[SERVER] Cliente {connected_clients.index(mac)} envió mensaje")
+                    print(data)
+                    
+                    unpacked_message = self.unpack_msg(data)
+                    print("[SERVER] Data unpacked: ", unpacked_message)
+                    # Guardar mensaje en la base datos con la data recibida
+                    self.create_data_row(unpacked_message)
+                
+                    # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
+                    # table_data = self.parse_body(data)
+                    #Datos.create(**table_data) # insertar datos en la base de datos
+                    # print(table_data)
+                    config = self.config.get()
+                    header = self.parse_header()
+                    # Enviar la configuración
+                    self.socket_UDP.sendto(header, addr)
+                    if config['transport_layer'] != 1:
+                        self.socket_TCP.settimeout(0)
+                        break
             except:
                 pass
-            mac = addr[0]
-            if mac not in connected_clients:
-                print(f'[SERVER] SE CONECTO {addr}')
-                connected_clients.append(mac)
-                # self.create_log(device=mac)
 
-            print(f"[SERVER] Cliente {connected_clients.index(mac)} envió mensaje")
-            print(data)
             
-            unpacked_message = self.unpack_msg(data)
-            print("[SERVER] Data unpacked: ", unpacked_message)
-            # Guardar mensaje en la base datos con la data recibida
-            self.create_data_row(unpacked_message)
-           
-            # El cliente ya recibió el header, por lo que 'datos' contiene la información del protocolo actual
-            # table_data = self.parse_body(data)
-            #Datos.create(**table_data) # insertar datos en la base de datos
-            # print(table_data)
-            config = self.config.get()
-            header = self.parse_header()
-            # Enviar la configuración
-            self.socket_UDP.sendto(header, addr)
-            if config['transport_layer'] != 1:
-                self.socket_TCP.settimeout(0)
-                break
 
 s = Server()
 s.run()
