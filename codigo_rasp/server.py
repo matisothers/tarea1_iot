@@ -216,7 +216,25 @@ class Server:
 
     def udp_handle(self):
         connected_clients = []
+        self.socket_TCP.settimeout(1)
+        self.socket_TCP.setblocking(False)
         while True:
+            try:
+                connection, address = self.socket_TCP.accept() # hace conexion TCP
+                with connection:
+                    print(f'{address} has connected')
+                    # Logear la conexión
+                    self.create_log_row(id_device=address[0])
+                    header = self.parse_header()
+                    # Enviar la configuración al microcontrolador
+                    print("[SERVER] Sending header")
+                    connection.send(header)
+                    print("[SERVER] Header sent")
+
+
+            except:
+                pass
+
             # Recibimos mensaje
             data, addr = self.socket_UDP.recvfrom(self.buff_size)
             mac = addr[0]
@@ -242,6 +260,7 @@ class Server:
             # Enviar la configuración
             self.socket_UDP.sendto(header, addr)
             if config['transport_layer'] != 1:
+                self.socket_TCP.settimeout(0)
                 break
 
 s = Server()
