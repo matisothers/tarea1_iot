@@ -43,7 +43,7 @@ def create_instance(self,datos:dict):
 
 
 class Config:
-    def __init__(self, transport_layer:int=1, id_protocol:int=0):
+    def __init__(self, transport_layer:int=0, id_protocol:int=0):
         self.transport_layer = transport_layer
         self.id_protocol = id_protocol
         self.row = None
