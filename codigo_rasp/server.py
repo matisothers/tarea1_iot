@@ -218,8 +218,7 @@ class Server:
         connected_clients = []
         self.socket_TCP.settimeout(1)
         self.socket_UDP.settimeout(1)
-        self.socket_TCP.setblocking(False)
-        self.socket_UDP.setblocking(False)
+    
         while True:
             try:
                 connection, address = self.socket_TCP.accept() # hace conexion TCP
