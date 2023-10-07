@@ -261,7 +261,8 @@ class Server:
                     if config['transport_layer'] != 1:
                         self.socket_TCP.settimeout(0)
                         break
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
             
