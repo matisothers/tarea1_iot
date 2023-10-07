@@ -217,7 +217,9 @@ class Server:
     def udp_handle(self):
         connected_clients = []
         self.socket_TCP.settimeout(1)
+        self.socket_UDP.settimeout(1)
         self.socket_TCP.setblocking(False)
+        self.socket_UDP.setblocking(False)
         while True:
             print("alo")
             try:
@@ -238,7 +240,10 @@ class Server:
                 pass
 
             # Recibimos mensaje
-            data, addr = self.socket_UDP.recvfrom(self.buff_size)
+            try:
+                data, addr = self.socket_UDP.recvfrom(self.buff_size) 
+            except:
+                pass
             mac = addr[0]
             if mac not in connected_clients:
                 print(f'[SERVER] SE CONECTO {addr}')
