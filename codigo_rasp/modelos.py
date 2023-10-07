@@ -48,7 +48,7 @@ class Datos(BaseModel):
     rgyr_y = ArrayField(FloatField, null=True)
     rgyr_z = ArrayField(FloatField, null=True)
     
-    timestamp = TimestampField()
+    timestamp = TimestampField(null=True)
     id_device = CharField(null=True)
 
 class Logs(BaseModel):

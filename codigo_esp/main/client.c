@@ -33,6 +33,62 @@ uint8_t get_mac_address() {
     return mac;
 }
 
+byte* Client__create_body(struct Client* self, int* length){
+    // crear body según el id_protocol
+    int id_protocol = Client__get_id_protocol(self);
+    int arr[5] = {1, 4, 10, 7*4, 12000*sizeof(float)};
+    int body_size = 0;
+    for(int i = 0; i <= id_protocol;i++){
+        body_size += arr[i];
+    }
+
+    byte* message = (byte*) malloc(body_size * sizeof(byte));
+
+    int batt = batt_level();
+    // uint8_t batt = 51;
+    int bytes_acc = arr[0];
+    memcpy(message, &batt, 1);
+    if (id_protocol >= 1){
+        time_t timestamp;
+        time(&timestamp);
+        timestamp = 1696627643;
+
+        // ESP_LOGI("offset","protocol 1: %d", bytes_acc);
+        // ESP_LOGI("create_body","timestamp: %lld", time(NULL));
+    
+        memcpy(message + bytes_acc, &timestamp, 4);
+        bytes_acc += arr[1];
+    } if (id_protocol >= 2){
+        struct THPC_Data tdata = generate_THPC_Data();
+        ESP_LOGI("offset","protocol 2: %d", bytes_acc);
+        memcpy(message + bytes_acc, &tdata.temp, 1);
+        memcpy(message + bytes_acc + 1, &tdata.pres, 4);
+        memcpy(message + bytes_acc + 5, &tdata.hum, 1);
+        memcpy(message + bytes_acc + 6, &tdata.co, 4);
+        int temp;
+        memcpy(&temp, message + bytes_acc,1);
+        ESP_LOGI("AAA","temp: %d",temp);
+        bytes_acc += arr[2];
+    } if (id_protocol == 3){
+        struct kpi_data kdata = generate_kpi_data();
+        memcpy(message + bytes_acc, &kdata.rms, 4);
+        memcpy(message + bytes_acc + 4*1, &kdata.ampx, 4);
+        memcpy(message + bytes_acc + 4*2, &kdata.freqx, 4);
+        memcpy(message + bytes_acc + 4*3, &kdata.ampy, 4);
+        memcpy(message + bytes_acc + 4*4, &kdata.freqy, 4);
+        memcpy(message + bytes_acc + 4*5, &kdata.ampz, 4);
+        memcpy(message + bytes_acc + 4*6, &kdata.freqz, 4);
+        bytes_acc += arr[3];
+    } if (id_protocol == 4){
+        float *fdata = malloc(12000 * sizeof(float));
+        acc_sensor(fdata);
+        memcpy(message + bytes_acc, (byte *)fdata, 12000 * sizeof(float));
+    }
+    *length = body_size;
+    
+    return message;
+}
+
 struct Message Client__create_msg(struct Client* self, byte* body, int body_length){
     struct Message msg;
     msg.id = self->packet_id;
@@ -44,11 +100,13 @@ struct Message Client__create_msg(struct Client* self, byte* body, int body_leng
     msg.length = 12 + body_length;
     msg.body = (byte*) malloc(body_length);
     memcpy(msg.body, body, body_length);
+    ESP_LOGI("Create msg","batt level= %d", *(msg.body));
     return msg;
 }
 
 byte* pack_struct(struct Message* msg) {
     int length_msg = msg->length;
+    ESP_LOGI("pack_struct","Body length= %d", length_msg);
     // int length_packet = 12 + length_msg;
     byte * packet = malloc(length_msg);
 
@@ -60,7 +118,8 @@ byte* pack_struct(struct Message* msg) {
     memcpy(packet + 10, &msg->length, 2);
 
     //body
-    memcpy(packet + 12, &msg->body, length_msg-12);
+    memcpy(packet + 12, msg->body, length_msg-12);
+    ESP_LOGI("pack_struct","batt level= %d", *(packet + 12));
     ESP_LOGI(TAG,"Headers puestos");
     return packet;
 }
@@ -135,11 +194,13 @@ void Client__tcp_connect(struct Client* self) {
 
 /*Manda un paquete y hace deep sleep 60s luego repite el proceso*/
 void Client__tcp(struct Client* self){
+    ESP_LOGI(TAG,"Comenzando TCP");
     int length;
     byte* body = Client__create_body(self, &length);
     struct Message msg = Client__create_msg(self, body, length); 
     byte* packet = pack_struct(&msg); 
-
+    int pres = *(packet + 18);
+    ESP_LOGI("thpc_re","pres: %d", pres);
     //byte* msg = Client__handle_msg(self);
     
     int msg_length = length+12;
@@ -198,100 +259,6 @@ void set_header_to_msg(struct Client* self, byte* buffer, int body_lenght){
     memcpy(buffer + 9, &(self->id_protocol), 1);
     memcpy(buffer + 10, &(size), 2);
     self->packet_id++;
-}
-
-
-byte* Client__create_body(struct Client* self, int* length){
-    // crear body según el id_protocol
-    int id_protocol = Client__get_id_protocol(self);
-    int arr[5] = {1, 5, 15, 15+7*4, 15+12000*sizeof(float)};
-    int body_size = arr[id_protocol];
-
-    byte* message = (byte*) malloc(body_size * sizeof(byte));
-
-    // int batt = batt_level();
-    int batt = 51;
-    ESP_LOGI(TAG, "Nivel de bateria: %i", batt);
-    int bytes_acc = arr[0];
-    memcpy(message, &batt, 1);
-    if (id_protocol >= 1){
-        unsigned long timestamp = (unsigned long) time(NULL);
-        memcpy(message + bytes_acc, &timestamp, 4);
-        bytes_acc += arr[1];
-    } if (id_protocol >= 2){
-        struct THPC_Data tdata = generate_THPC_Data();
-        memcpy(message + bytes_acc, &tdata, 10);
-        bytes_acc += arr[2];
-    } if (id_protocol == 3){
-        struct kpi_data kdata = generate_kpi_data();
-        memcpy(message + bytes_acc, &kdata, 7*4);
-        bytes_acc += arr[3];
-    } if (id_protocol == 4){
-        float *fdata = malloc(12000 * sizeof(float));
-        acc_sensor(fdata);
-        memcpy(message + bytes_acc, (byte *)fdata, 12000 * sizeof(float));
-    }
-    ESP_LOGI(TAG,"Body creado");
-    *length = body_size;
-    
-    return message;
-}
-
-// función que retorna el mensaje (headers+body) empaquetado
-byte* Client__handle_msg(struct Client* self){
-    
-    byte* message;
-    // crear body según el id_protocol
-    int id_protocol = Client__get_id_protocol(self);
-    int body_size = 0;
-    switch (id_protocol){
-        case 0:
-            body_size = 1;
-            break;
-        case 1:
-            body_size = 5;
-            break;
-        case 2:
-            body_size = 15;
-            break;
-        case 3:
-            body_size = 15 + 7*4;
-            break;
-        case 4:
-            body_size = 15 + 12000 * sizeof(float);
-            break;
-    }
-
-    // Crear headers
-    
-    message = (byte*) malloc(12 + body_size * sizeof(byte));
-    set_header_to_msg(self, message, body_size);
-    // ...
-
-    char batt = batt_level();
-    memcpy(message + 12, &batt, 1);
-    if (id_protocol > 0){
-        unsigned long timestamp = (unsigned long)time(NULL);
-        memcpy(message + 13, &timestamp, 4);
-    }
-    if (id_protocol > 1){
-        struct THPC_Data tdata = generate_THPC_Data();
-        memcpy(message + 18, &tdata, 10);
-    }
-    if (id_protocol == 3){
-        struct kpi_data kdata = generate_kpi_data();
-        memcpy(message + 27, &kdata, 7*4);
-    }
-    if (id_protocol == 4){
-        float *fdata = malloc(12000 * sizeof(float));
-        acc_sensor(fdata);
-        memcpy(message + 27, (byte *)fdata, 12000 * sizeof(float));
-    }
-    // retornar headers + body
-    
-    ESP_LOGI("handle_msg","packed final message: %s", message);
-    
-    return message;
 }
 
 void Client__handle(struct Client* self){ 
@@ -411,7 +378,7 @@ void acc_sensor(float* data){ // 12.000
     }
 }
 
-int batt_level(){
+uint8_t batt_level(){
     return (rand() % 100) + 1;
 }
 
@@ -427,15 +394,21 @@ struct kpi_data generate_kpi_data(){
     res.freqz = 89.0 + ((float) rand() / (float) RAND_MAX) * (2.0);
     res.rms = sqrt(res.ampx*res.ampx + res.ampy*res.ampy + res.ampz * res.ampz);
 
+
     return res;
 }
 
 
 thpc generate_THPC_Data(){
     struct THPC_Data res;
-    res.temp = 5 + (rand()/RAND_MAX)*25;
-    res.hum = 30 + (rand()/RAND_MAX)*50;
-    res.pres = 1000 + (rand()/RAND_MAX)*200;
+    res.temp = 5 + rand()%25;
+    res.temp = 10;
+    res.hum = 30 + rand()%50;
+    res.pres = 1000 + rand()%200;
     res.co = 30 + ((float) rand() / (float) (RAND_MAX)) * 170;
+    ESP_LOGI("thpc","temp: %d", res.temp);
+    ESP_LOGI("thpc","hum: %d", res.hum);
+    ESP_LOGI("thpc","pres: %d", res.pres);
+    ESP_LOGI("thpc","length_msg: %f", res.co);
     return res;
 }

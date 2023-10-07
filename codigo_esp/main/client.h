@@ -18,6 +18,7 @@
 #include "lwip/sockets.h" // Para sockets
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <time.h>
 
 
 //Credenciales de WiFi
@@ -91,10 +92,11 @@ struct Message Client__create_msg(struct Client* self, byte* body, int body_leng
 extern void Client__handle(struct Client* self);
 byte* Client__handle_msg(struct Client* self);
 void acc_sensor(float* data);
-int batt_level();
+uint8_t batt_level();
 struct kpi_data generate_kpi_data();
 struct THPC_Data generate_THPC_Data();
 struct Info unpack(byte * packet);
 byte* pack(int packet_id, char* mac, int transport_layer, int id_protocol, char * msg);
 void set_header_to_msg(struct Client* self,byte* buffer, int body_lenght);
 struct Info unpack(byte * packet);
+int Client__get_id_protocol(struct Client* self);
