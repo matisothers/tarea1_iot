@@ -218,8 +218,8 @@ class Server:
         connected_clients = []
         self.socket_TCP.settimeout(1)
         self.socket_TCP.setblocking(False)
-        print("alo")
         while True:
+            print("alo")
             try:
                 connection, address = self.socket_TCP.accept() # hace conexion TCP
                 with connection:
@@ -234,6 +234,7 @@ class Server:
 
 
             except:
+                print("no conecto")
                 pass
 
             # Recibimos mensaje
