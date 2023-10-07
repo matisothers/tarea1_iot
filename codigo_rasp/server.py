@@ -221,7 +221,6 @@ class Server:
         self.socket_TCP.setblocking(False)
         self.socket_UDP.setblocking(False)
         while True:
-            print("alo")
             try:
                 connection, address = self.socket_TCP.accept() # hace conexion TCP
                 with connection:
@@ -234,7 +233,6 @@ class Server:
                     connection.send(header)
                     print("[SERVER] Header sent")
             except:
-                print("no conecto")
                 pass
 
             # Recibimos mensaje
